@@ -1,6 +1,6 @@
 # Claims checking
 
-Extraction et structuration d'informations venant de quelques site web de fact-checking 
+Extraction et structuration d'informations venant de quelques site web de fact-checking
 
 ## À propos du projet
 
@@ -8,6 +8,7 @@ Les fausses nouvelles (fake news) sont devenues un problème de plus en plus imp
 
 - [NoRumors](http://norumors.net/) ~~> Arabie saoudite, en arabe.
 - [fatabyyano](https://fatabyyano.net/) ~~> Jordani, en Arabe, Fatabyyano ("فتبينوا" veut dire "Alors montre-le" en arabe) est la première et la seule plateforme arabe certifiée par l'[IFCN](https://ifcncodeofprinciples.poynter.org/).
+
 - [factScan](http://factscan.ca) ~~> Canada, en Anglais (parait très bien structurer).
 - [africacheck](https://africacheck.org) ~~> Afrique, en Anglais.
 
@@ -34,7 +35,7 @@ End with an example of getting some data out of the system or using it for a lit
 
 ## Technologie utilisée
 
-* [Python](https://www.python.org/) - The principal language
+- [Python](https://www.python.org/) - The principal language
 
 ## Contribuant
 
@@ -42,16 +43,16 @@ Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c6
 
 ## Auteurs
 
-* **Bouzidi Belkassim** ~~> [BOuzidiBElkassim](https://github.com/BOuzidiBElkassim)
-* **Elhouiti Chakib** ~~> [chakibreds](https://github.com/chakibreds/)
-* **Kezzoul Massili** ~~> [massyKezzoul](https://github.com/massykezzoul)
-* **Nedjari Abdelkader** ~~> [abdelkader-nedjari](https://www.linkedin.com/in/abdelkader-nedjari/)
-* **Zeroual Ramzi** ~~> [RamziZer](https://github.com/RamziZer)
+- **Bouzidi Belkassim** ~~> [BOuzidiBElkassim](https://github.com/BOuzidiBElkassim)
+- **Elhouiti Chakib** ~~> [chakibreds](https://github.com/chakibreds/)
+- **Kezzoul Massili** ~~> [massyKezzoul](https://github.com/massykezzoul)
+- **Nedjari Abdelkader** ~~> [abdelkader-nedjari](https://www.linkedin.com/in/abdelkader-nedjari/)
+- **Zeroual Ramzi** ~~> [RamziZer](https://github.com/RamziZer)
 
-- Encadrement : **Konstantin Todorov** ​[todorov@lirmm.fr​](mailto:todorov@lirmm.fr​)
+* Encadrement : **Konstantin Todorov** ​[todorov@lirmm.fr​](mailto:todorov@lirmm.fr​)
 
 ## Remerciements
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+- Hat tip to anyone whose code was used
+- Inspiration
+- etc
