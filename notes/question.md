@@ -1,7 +1,7 @@
 # Questions à propos du projet
 
-- Comment va t-on extraire les données (les facts) du site web?
-- Quelle framework ou outils peut-on utiliser avec python?
+- Quand utilisé tagme?
+- Pourquoi les scripts python ne marche pas pour certains sites?
 - Quels sont les données minimum qu'on doit pouvoir extraire? (auteur, un titre, catégorie, une date ...?)
   1. l'énoncé textuel de la claim
   2. sa valeur de vérité ou sa cote (à la fois la valeur normalisée et la cote d'origine)
