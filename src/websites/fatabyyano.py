@@ -80,7 +80,12 @@ class FatabyyanoFactCheckingSiteExtractor:
         pass
     
     def extract_claim(self,parsed_claim_review_page: BeautifulSoup) -> str:
-        return ""
+        claim = parsed_claim_review_page.select_one("h1.post_title")
+        if (claim):
+            return claim.text
+        else:
+            print("something wrong in extracting claim")
+            return ""
     
     def extract_review(self,parsed_claim_review_page: BeautifulSoup) -> str:
         return ""
@@ -101,6 +106,9 @@ class FatabyyanoFactCheckingSiteExtractor:
         else:
             print("Something wrong in extracting rating value !")
             return ""
+
+    def extract_differents_rating_value(self,parsed_claim_review_page : BeautifulSoup) -> List[str]:
+        return []
 
     def translate_rating_value(self,initial_rating_value: str) -> str:
         return ""

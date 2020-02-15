@@ -24,14 +24,16 @@ def main():
 
     for line in sys.stdin:
         line.rstrip()
-        value = fatabyyano.extract_rating_value(fatabyyano.get(line))
+        claim = fatabyyano.extract_claim(fatabyyano.get(line))
+        print(claim)
+        """value = fatabyyano.extract_rating_value(fatabyyano.get(line))
         print(value)
-        if value not in different_rating_value:
+         if value not in different_rating_value:
             different_rating_value.append(value)
 
     print("# Rating value system of fatabyyano : ")
     for v in different_rating_value:
-        print("- " + str(v))
+        print("- " + str(v)) """
 
 
 if __name__ == "__main__":
