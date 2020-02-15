@@ -67,7 +67,7 @@ class FatabyyanoFactCheckingSiteExtractor:
         url_begin = "https://fatabyyano.net/page/"
         url_end   = "/?s"
         result = []
-        for i in range(1,number_of_pages):
+        for i in range(1,number_of_pages+1):
             url = url_begin + str(i) + url_end
             parsed_web_page = self.get(url)
             links = parsed_web_page.select("main article h2 a")
