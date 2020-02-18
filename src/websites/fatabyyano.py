@@ -91,6 +91,11 @@ class FatabyyanoFactCheckingSiteExtractor:
         return ""
 
     def extract_date(self,parsed_claim_review_page: BeautifulSoup) -> str:
+        date = parsed_claim_review_page.select_one("time.w-post-elm.post_date.entry-date.published")
+        if (date):
+            return date['datetime']
+        else:
+            print("something wrong in extracting the date")    
         return ""
 
     def extract_tags(self,parsed_claim_review_page: BeautifulSoup) -> str:
