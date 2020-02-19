@@ -21,11 +21,22 @@ def main():
     """  for line in sys.stdin:
         line.rstrip()  # enleve le dernier '\n' de la ligne
         webpage = fatabyyano.get(line)
+        tags = fatabyyano.extract_tags(webpage)
+        date = fatabyyano.extract_date(webpage)
         claim = fatabyyano.extract_claim(webpage)
-        value = fatabyyano.extract_rating_value(webpage)
-        if value == "" or claim == "":
+        rating = fatabyyano.extract_rating_value(webpage)
+        if tags == [] or claim == "" or rating == "" or claim == "" or date == "":
             print(line)  # print url
+<<<<<<< HEAD
     
+=======
+        else:
+            print(rating + " --> " +
+                  f.FatabyyanoFactCheckingSiteExtractor.translate_rating_value(rating))
+            print(tags)
+
+        """
+>>>>>>> ad96d73e4fcdfab5904ec914c66134833d677a88
         print(claim)
         print(value)
     """
