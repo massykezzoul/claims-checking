@@ -1,3 +1,5 @@
 
 # python cache
 src/websites/__pycache__/
+src/websites/__pycache__/*
+**.pyc

@@ -19,7 +19,7 @@ class FatabyyanoFactCheckingSiteExtractor:
     def __init__(self):
         print("Configuration Here...")
 
-    def get(self,url):
+    def get(self, url):
         """ @return the webpage """
         headers = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'}
@@ -56,7 +56,7 @@ class FatabyyanoFactCheckingSiteExtractor:
                 maximum = p
         return maximum
 
-    def retrieve_urls(self, parsed_listing_page: BeautifulSoup, listing_page_url: str, number_of_pages: int) \
+    def retrieve_urls(self, parsed_listing_page: BeautifulSoup, listing_page_url: str, begin: int, number_of_pages: int) \
             -> List[str]:
         """ 
             :parsed_listing_page: --> une page (parsed) qui liste des claims
@@ -65,9 +65,9 @@ class FatabyyanoFactCheckingSiteExtractor:
             :return:              --> la liste des url de toutes les claims
         """
         url_begin = "https://fatabyyano.net/page/"
-        url_end   = "/?s"
+        url_end = "/?s"
         result = []
-        for i in range(1,number_of_pages+1):
+        for i in range(begin, number_of_pages+1):
             url = url_begin + str(i) + url_end
             parsed_web_page = self.get(url)
             links = parsed_web_page.select("main article h2 a")
@@ -78,37 +78,38 @@ class FatabyyanoFactCheckingSiteExtractor:
     def extract_claim_and_review(self, parsed_claim_review_page: BeautifulSoup, url: str) -> List[Claim]:
         """ I think that this method extract everything """
         pass
-    
-    def extract_claim(self,parsed_claim_review_page: BeautifulSoup) -> str:
+
+    def extract_claim(self, parsed_claim_review_page: BeautifulSoup) -> str:
         claim = parsed_claim_review_page.select_one("h1.post_title")
         if (claim):
             return claim.text
         else:
-            print("something wrong in extracting claim")
+            #print("something wrong in extracting claim")
             return ""
-    
-    def extract_review(self,parsed_claim_review_page: BeautifulSoup) -> str:
+
+    def extract_review(self, parsed_claim_review_page: BeautifulSoup) -> str:
         return ""
 
-    def extract_date(self,parsed_claim_review_page: BeautifulSoup) -> str:
+    def extract_date(self, parsed_claim_review_page: BeautifulSoup) -> str:
         return ""
 
-    def extract_tags(self,parsed_claim_review_page: BeautifulSoup) -> str:
+    def extract_tags(self, parsed_claim_review_page: BeautifulSoup) -> str:
         return ""
 
-    def extract_author(self,parsed_claim_review_page: BeautifulSoup) -> str:
+    def extract_author(self, parsed_claim_review_page: BeautifulSoup) -> str:
         return ""
-    
-    def extract_rating_value(self,parsed_claim_review_page: BeautifulSoup) -> str:
-        btn = parsed_claim_review_page.select("div.style_badge a.w-btn.us-btn-style_7")
+
+    def extract_rating_value(self, parsed_claim_review_page: BeautifulSoup) -> str:
+        btn = parsed_claim_review_page.select(
+            "div.style_badge a.w-btn.us-btn-style_7")
         if len(btn) == 1:
             return btn[0].text
         else:
-            print("Something wrong in extracting rating value !")
+            #print("Something wrong in extracting rating value !")
             return ""
 
-    def extract_differents_rating_value(self,parsed_claim_review_page : BeautifulSoup) -> List[str]:
+    def extract_differents_rating_value(self, parsed_claim_review_page: BeautifulSoup) -> List[str]:
         return []
 
-    def translate_rating_value(self,initial_rating_value: str) -> str:
+    def translate_rating_value(self, initial_rating_value: str) -> str:
         return ""
