@@ -18,7 +18,7 @@ def main():
         print(url) 
     """
 
-    for line in sys.stdin:
+    """  for line in sys.stdin:
         line.rstrip()  # enleve le dernier '\n' de la ligne
         webpage = fatabyyano.get(line)
         tags = fatabyyano.extract_tags(webpage)
@@ -27,15 +27,27 @@ def main():
         rating = fatabyyano.extract_rating_value(webpage)
         if tags == [] or claim == "" or rating == "" or claim == "" or date == "":
             print(line)  # print url
+<<<<<<< HEAD
+    
+=======
         else:
             print(rating + " --> " +
                   f.FatabyyanoFactCheckingSiteExtractor.translate_rating_value(rating))
             print(tags)
 
         """
+>>>>>>> ad96d73e4fcdfab5904ec914c66134833d677a88
         print(claim)
         print(value)
-        """
+    """
+    retrieve_listing_page_urls = fatabyyano.retrieve_listing_page_urls()
+    
+    for page in retrieve_listing_page_urls :
+        page_parsed = fatabyyano.get(page)
+        number_of_pages = fatabyyano.find_page_count(page_parsed)
+        claims_urls = fatabyyano.retrieve_urls(page_parsed,page,1,number_of_pages)
+        for url in claims_urls:
+            print(url) 
 
 
 if __name__ == "__main__":

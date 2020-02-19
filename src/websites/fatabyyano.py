@@ -42,7 +42,12 @@ class FatabyyanoFactCheckingSiteExtractor:
             categorized by another criterion (e.g. on politifact there is a separate listing for each possible rating).
             :return: Return a list of listing page urls
         """
-        return ["https://fatabyyano.net/page/1/?s"]
+        different_urls = []
+        different_rating_value = ["صحيح","زائف-جزئياً","زائف","خادع","ساخر","رأي","عنوان-مضلل","غير-مؤهل"]
+        url_begin = "https://fatabyyano.net/newsface/"
+        for value in different_rating_value :
+            different_urls.append(url_begin+value+"/")
+        return different_urls
 
     def find_page_count(self, parsed_listing_page: BeautifulSoup) -> int:
         """
@@ -53,13 +58,19 @@ class FatabyyanoFactCheckingSiteExtractor:
         """
         page_numbers = parsed_listing_page.select(
             "div.nav-links a.page-numbers span")
-        maximum = 0
+        maximum = 1
         for page_number in page_numbers:
             p = int(page_number.text)
             if (p > maximum):
                 maximum = p
         return maximum
 
+<<<<<<< HEAD
+    
+    def retrieve_urls(self, parsed_claim_review_page: BeautifulSoup, listing_page_url: str, begin: int, number_of_pages: int) -> List[str]:
+        url_begin = listing_page_url+"page/"
+        url_end = "/"
+=======
     def retrieve_urls(self, parsed_listing_page: BeautifulSoup, listing_page_url: str, begin: int, number_of_pages: int) \
             -> List[str]:
         """
@@ -70,14 +81,17 @@ class FatabyyanoFactCheckingSiteExtractor:
         """
         url_begin = "https://fatabyyano.net/page/"
         url_end = "/?s"
+>>>>>>> ad96d73e4fcdfab5904ec914c66134833d677a88
         result = []
-        for i in range(begin, number_of_pages+1):
-            url = url_begin + str(i) + url_end
+        for page_number in range(begin, number_of_pages+1):
+            url = url_begin+str(page_number)+url_end
             parsed_web_page = self.get(url)
             links = parsed_web_page.select("main article h2 a")
             for link in links:
                 result.append(link['href'])
         return result
+
+
 
     def extract_claim_and_review(self, parsed_claim_review_page: BeautifulSoup, url: str) -> List[Claim]:
         """ I think that this method extract everything """
