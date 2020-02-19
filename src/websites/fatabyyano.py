@@ -31,7 +31,7 @@ class FatabyyanoFactCheckingSiteExtractor:
         return soup
 
     def get_all_claims(self):
-        """ @retun all claims """
+        """ :return: all claims """
         claims = []
         return claims
 
@@ -103,21 +103,22 @@ class FatabyyanoFactCheckingSiteExtractor:
             print("something wrong in extracting the date")
             return ""
 
-    def extract_tags(self, parsed_claim_review_page: BeautifulSoup) -> List[str]:
+    def extract_tags(self, parsed_claim_review_page: BeautifulSoup) -> str:
         """
             :parsed_claim_review_page:  --> the parsed web page of the claim
             :return:                    --> return a list of tags that are related to the claim
         """
         tags_link = parsed_claim_review_page.select(
             "div.w-post-elm.post_taxonomy.style_simple a")
-        tags = []
+        tags = ""
         for tag_link in tags_link:
-            if tag_link and tag_link.text:
+            if tag_link.text:
                 tag = tag_link.text
                 if tag[0] == '#':  # if the tag begin with '#'
                     tag = tag[1:]
-                tags.append(tag)
-        return tags
+                tags += tag + ","
+
+        return tags[:len(tags)-1]
 
     def extract_author(self, parsed_claim_review_page: BeautifulSoup) -> str:
         return "fatabyyano"
@@ -131,6 +132,7 @@ class FatabyyanoFactCheckingSiteExtractor:
             # print("Something wrong in extracting rating value !")
             return ""
 
+    @staticmethod
     def translate_rating_value(initial_rating_value: str) -> str:
         return {
             "صحيح": "TRUE",
@@ -142,5 +144,3 @@ class FatabyyanoFactCheckingSiteExtractor:
             "خادع": "FALSE",  # ? (Trompeur)
             "زائف": "FALSE"
         }[initial_rating_value]
-
-        # return translate[initial_rating_value]
