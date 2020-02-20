@@ -17,7 +17,8 @@ class Claim:
 class FatabyyanoFactCheckingSiteExtractor:
 
     def __init__(self):
-        print("Configuration Here...")
+        # Configuration Here...
+        pass
 
     def get(self, url):
         """ @return the webpage """
@@ -26,7 +27,7 @@ class FatabyyanoFactCheckingSiteExtractor:
         html = requests.get(url, headers=headers).text
         soup = BeautifulSoup(html, 'lxml')
         # removing some useless tags
-        for s in soup.select("script, iframe, head, header, footer"):
+        for s in soup.select("script, iframe, head, header, footer, style"):
             s.extract()
         return soup
 
@@ -86,7 +87,13 @@ class FatabyyanoFactCheckingSiteExtractor:
 
     def extract_claim_and_review(self, parsed_claim_review_page: BeautifulSoup, url: str) -> List[Claim]:
         """ I think that this method extract everything """
-        pass
+        date = self.extract_author(parsed_claim_review_page)
+        date = self.extract_claim(parsed_claim_review_page)
+        date = self.extract_rating_value(parsed_claim_review_page)
+        date = self.extract_tags(parsed_claim_review_page)
+        date = self.extract_links(parsed_claim_review_page)
+        date = self.extract_date(parsed_claim_review_page)
+        return date
 
     def extract_claim(self, parsed_claim_review_page: BeautifulSoup) -> str:
         claim = parsed_claim_review_page.select_one("h1.post_title")
@@ -98,6 +105,17 @@ class FatabyyanoFactCheckingSiteExtractor:
 
     def extract_review(self, parsed_claim_review_page: BeautifulSoup) -> str:
         return ""
+
+    def extract_links(self, parsed_claim_review_page: BeautifulSoup) -> str:
+        # css_selector qui selectionne la photo qui apparait avant les sources
+        css_selector = "section:nth-of-type(3) img[alt*=\"المصادر\"] ,section:nth-of-type(3) img:last-child"
+        links = ""
+        links_tags = parsed_claim_review_page.select(
+            "section.l-section.wpb_row.height_small a")
+        for link_tag in links_tags:
+            if link_tag['href'] and "مصدر" in link_tag.text:
+                links += link_tag['href'] + ", "
+        return links[:len(links)-1]
 
     def extract_date(self, parsed_claim_review_page: BeautifulSoup) -> str:
         date = parsed_claim_review_page.select_one(
@@ -118,9 +136,7 @@ class FatabyyanoFactCheckingSiteExtractor:
         tags = ""
         for tag_link in tags_link:
             if tag_link.text:
-                tag = tag_link.text
-                if tag[0] == '#':  # if the tag begin with '#'
-                    tag = tag[1:]
+                tag = (tag_link.text).replace("#", "")
                 tags += tag + ","
 
         return tags[:len(tags)-1]
