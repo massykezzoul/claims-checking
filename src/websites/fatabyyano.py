@@ -9,9 +9,10 @@ from tqdm import tqdm
 import requests
 from bs4 import NavigableString
 
+from claim import Claim
 
-class Claim:
-    pass
+
+
 
 
 class FatabyyanoFactCheckingSiteExtractor:
@@ -87,13 +88,22 @@ class FatabyyanoFactCheckingSiteExtractor:
 
     def extract_claim_and_review(self, parsed_claim_review_page: BeautifulSoup, url: str) -> List[Claim]:
         """ I think that this method extract everything """
-        date = self.extract_author(parsed_claim_review_page)
-        date = self.extract_claim(parsed_claim_review_page)
-        date = self.extract_rating_value(parsed_claim_review_page)
-        date = self.extract_tags(parsed_claim_review_page)
-        date = self.extract_links(parsed_claim_review_page)
-        date = self.extract_date(parsed_claim_review_page)
-        return date
+    
+        claim = Claim() 
+        claim.set_rating_value(self.extract_rating_value(parsed_claim_review_page))
+        claim.set_alternate_name(FatabyyanoFactCheckingSiteExtractor.translate_rating_value(self.extract_rating_value(parsed_claim_review_page)))
+        claim.set_source("fatabyyano")
+        claim.set_author("fatabyyano")
+        claim.setDatePublished(self.extract_date(parsed_claim_review_page))
+        claim.set_claim(self.extract_claim(parsed_claim_review_page))
+        claim.set_body(self.extract_review(parsed_claim_review_page))
+        claim.set_refered_links(self.extract_links(parsed_claim_review_page))
+        claim.set_title(self.extract_claim(parsed_claim_review_page))
+        claim.set_date(self.extract_date(parsed_claim_review_page))
+        claim.set_url(url)
+        claim.set_tags(self.extract_tags(parsed_claim_review_page))
+
+        return [claim]
 
     def extract_claim(self, parsed_claim_review_page: BeautifulSoup) -> str:
         claim = parsed_claim_review_page.select_one("h1.post_title")
