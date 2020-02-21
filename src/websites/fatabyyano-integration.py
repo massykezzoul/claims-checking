@@ -8,34 +8,33 @@ from tqdm import tqdm
 
 import requests
 from bs4 import NavigableString
+from claim_extractor.extractors import caching
 
-from claim import Claim
+from claim_extractor import Claim, Configuration
+from claim_extractor.extractors import FactCheckingSiteExtractor, caching
 
 
 
 
 
-class FatabyyanoFactCheckingSiteExtractor:
+class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
 
-    def __init__(self):
-        # Configuration Here...
-        pass
+   
+    def __init__(self, configuration: Configuration):
+        super().__init__(configuration)
 
     def get(self, url):
         """ @return the webpage """
         headers = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'}
-        html = requests.get(url, headers=headers).text
+        html = caching.get(url, headers=headers)
         soup = BeautifulSoup(html, 'lxml')
         # removing some useless tags
         for s in soup.select("script, iframe, head, header, footer, style"):
             s.extract()
         return soup
 
-    def get_all_claims(self):
-        """ :return: all claims """
-        claims = []
-        return claims
+   
 
     def retrieve_listing_page_urls(self) -> List[str]:
         """
@@ -68,7 +67,7 @@ class FatabyyanoFactCheckingSiteExtractor:
                 maximum = p
         return maximum
 
-    def retrieve_urls(self, parsed_claim_review_page: BeautifulSoup, listing_page_url: str, begin: int, number_of_pages: int) -> List[str]:
+    def retrieve_urls(self, parsed_claim_review_page: BeautifulSoup, listing_page_url: str, number_of_pages: int) -> List[str]:
         """
             :parsed_listing_page: --> une page (parsed) qui liste des claims
             :listing_page_url:    --> l'url associé à la page ci-dessus
@@ -78,7 +77,7 @@ class FatabyyanoFactCheckingSiteExtractor:
         url_begin = listing_page_url+"page/"
         url_end = "/"
         result = []
-        for page_number in range(begin, number_of_pages+1):
+        for page_number in range(1, number_of_pages+1):
             url = url_begin+str(page_number)+url_end
             parsed_web_page = self.get(url)
             links = parsed_web_page.select("main article h2 a")
@@ -114,15 +113,14 @@ class FatabyyanoFactCheckingSiteExtractor:
             return ""
 
     def extract_review(self, parsed_claim_review_page: BeautifulSoup) -> str:
-        return parsed_claim_review_page.select_one(
-            "section.l-section.wpb_row.height_small div[itemprop=\"text\"]").text
+        return ""
 
     def extract_links(self, parsed_claim_review_page: BeautifulSoup) -> str:
         # css_selector qui selectionne la photo qui apparait avant les sources
         css_selector = "section:nth-of-type(3) img[alt*=\"المصادر\"] ,section:nth-of-type(3) img:last-child"
         links = ""
         links_tags = parsed_claim_review_page.select(
-            "section.l-section.wpb_row.height_small div[itemprop=\"text\"] a")
+            "section.l-section.wpb_row.height_small a")
         for link_tag in links_tags:
             if link_tag['href'] and "مصدر" in link_tag.text:
                 links += link_tag['href'] + ", "
