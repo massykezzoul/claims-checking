@@ -10,7 +10,7 @@ def main():
     print("main")
     fatabyyano = f.FatabyyanoFactCheckingSiteExtractor()
 
-    print("url, rating, rating_translate, claim, date, tags, source")
+    print("url, rating, rating_translate, claim, date, tags, source, review")
 
     # retrieving claims urls
     retrieve_listing_page_urls = fatabyyano.retrieve_listing_page_urls()
@@ -30,15 +30,18 @@ def main():
             date = fatabyyano.extract_date(webpage)
             tags = fatabyyano.extract_tags(webpage)
             source = fatabyyano.extract_links(webpage)
+            review = fatabyyano.extract_review(webpage)
             rating_translate = f.FatabyyanoFactCheckingSiteExtractor.translate_rating_value(
                 rating)
             print(escape(claim_url)+", "+escape(rating)+", "+rating_translate +
-                  ", "+escape(claim) + ", "+date+", "+escape(tags)+", "+escape(source))
+                  ", "+escape(claim) + ", "+date+", "+escape(tags)+", "+escape(source)+", "+escape(review))
 
 
 def escape(str):
     # define this fucntion as a method of the class Fatabyyano...
-    return ('"'+str.replace("ﷺ", "صَلَّىٰ ٱللَّٰهُ عَلَيْهِ وَسَلَّمَ").replace("\n", " ")+'"')
+    str = str.replace("ﷺ", "صَلَّىٰ ٱللَّٰهُ عَلَيْهِ وَسَلَّمَ").replace(
+        "\n", " ").replace('"', "'")
+    return '"' + str + '"'
 
 
 if __name__ == "__main__":

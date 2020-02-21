@@ -104,14 +104,15 @@ class FatabyyanoFactCheckingSiteExtractor:
             return ""
 
     def extract_review(self, parsed_claim_review_page: BeautifulSoup) -> str:
-        return ""
+        return parsed_claim_review_page.select_one(
+            "section.l-section.wpb_row.height_small div[itemprop=\"text\"]").text
 
     def extract_links(self, parsed_claim_review_page: BeautifulSoup) -> str:
         # css_selector qui selectionne la photo qui apparait avant les sources
         css_selector = "section:nth-of-type(3) img[alt*=\"المصادر\"] ,section:nth-of-type(3) img:last-child"
         links = ""
         links_tags = parsed_claim_review_page.select(
-            "section.l-section.wpb_row.height_small a")
+            "section.l-section.wpb_row.height_small div[itemprop=\"text\"] a")
         for link_tag in links_tags:
             if link_tag['href'] and "مصدر" in link_tag.text:
                 links += link_tag['href'] + ", "
