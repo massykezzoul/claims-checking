@@ -99,7 +99,7 @@ class FatabyyanoFactCheckingSiteExtractor:
         claim.set_body(self.extract_review(parsed_claim_review_page))
         claim.set_refered_links(self.extract_links(parsed_claim_review_page))
         claim.set_title(self.extract_claim(parsed_claim_review_page))
-        claim.set_date(self.extract_date(parsed_claim_review_page))
+        claim.setDatePublished(self.extract_date_published(parsed_claim_review_page))
         claim.set_url(url)
         claim.set_tags(self.extract_tags(parsed_claim_review_page))
 
@@ -128,7 +128,7 @@ class FatabyyanoFactCheckingSiteExtractor:
                 links += link_tag['href'] + ", "
         return links[:len(links)-1]
 
-    def extract_date(self, parsed_claim_review_page: BeautifulSoup) -> str:
+    def extract_date_published(self, parsed_claim_review_page: BeautifulSoup) -> str:
         date = parsed_claim_review_page.select_one(
             "time.w-post-elm.post_date.entry-date.published")
         if date:
