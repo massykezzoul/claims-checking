@@ -1,4 +1,5 @@
 # class Claim used in claimsKG-extractor
+from typing import Dict
 
 
 class Claim:
