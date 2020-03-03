@@ -114,7 +114,8 @@ class FatabyyanoFactCheckingSiteExtractor:
             return ""
 
     def extract_review(self, parsed_claim_review_page: BeautifulSoup) -> str:
-        return ""
+                return parsed_claim_review_page.select_one(
+            "section.l-section.wpb_row.height_small div[itemprop=\"text\"]").text
 
     def extract_links(self, parsed_claim_review_page: BeautifulSoup) -> str:
         # css_selector qui selectionne la photo qui apparait avant les sources
