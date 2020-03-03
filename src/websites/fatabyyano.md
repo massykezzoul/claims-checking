@@ -8,3 +8,6 @@
 - غير مؤهل --> FALSE? (Inéligible)
 - خادع --> FALSE? (Trompeur)
 - زائف --> FALSE
+
+# Clear cache 
+redis-cli --raw keys "https://fatabyyano.net/*" | xargs redis-cli --raw del -
