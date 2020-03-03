@@ -12,9 +12,6 @@ from bs4 import NavigableString
 from claim import Claim
 
 
-
-
-
 class FatabyyanoFactCheckingSiteExtractor:
 
     def __init__(self):
@@ -88,10 +85,12 @@ class FatabyyanoFactCheckingSiteExtractor:
 
     def extract_claim_and_review(self, parsed_claim_review_page: BeautifulSoup, url: str) -> List[Claim]:
         """ I think that this method extract everything """
-    
-        claim = Claim() 
-        claim.set_rating_value(self.extract_rating_value(parsed_claim_review_page))
-        claim.set_alternate_name(FatabyyanoFactCheckingSiteExtractor.translate_rating_value(self.extract_rating_value(parsed_claim_review_page)))
+
+        claim = Claim()
+        claim.set_rating_value(
+            self.extract_rating_value(parsed_claim_review_page))
+        claim.set_alternate_name(FatabyyanoFactCheckingSiteExtractor.translate_rating_value(
+            self.extract_rating_value(parsed_claim_review_page)))
         claim.set_source("fatabyyano")
         claim.set_author("fatabyyano")
         claim.setDatePublished(self.extract_date(parsed_claim_review_page))
@@ -102,6 +101,7 @@ class FatabyyanoFactCheckingSiteExtractor:
         claim.set_date(self.extract_date(parsed_claim_review_page))
         claim.set_url(url)
         claim.set_tags(self.extract_tags(parsed_claim_review_page))
+        claim.set_body(self.extract_review(parsed_claim_review_page))
 
         return [claim]
 
@@ -143,7 +143,7 @@ class FatabyyanoFactCheckingSiteExtractor:
             :return:                    --> return a list of tags that are related to the claim
         """
         tags_link = parsed_claim_review_page.select(
-            "div.w-post-elm.post_taxonomy.style_simple a")
+            "div.w-post-elm.post_taxonomy.style_simple a[rel=\"tag\"]")
         tags = ""
         for tag_link in tags_link:
             if tag_link.text:
