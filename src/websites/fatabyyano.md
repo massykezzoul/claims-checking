@@ -10,4 +10,7 @@
 - زائف --> FALSE
 
 # Clear cache 
-redis-cli --raw keys "https://fatabyyano.net/*" | xargs redis-cli --raw del -
+- redis-cli flushall
+- redis-cli flushdb
+
+
