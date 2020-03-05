@@ -101,7 +101,7 @@ class FatabyyanoFactCheckingSiteExtractor:
         claim.set_date(self.extract_date(parsed_claim_review_page))
         claim.set_url(url)
         claim.set_tags(self.extract_tags(parsed_claim_review_page))
-        claim.set_body(self.extract_review(parsed_claim_review_page))
+       
 
         return [claim]
 
