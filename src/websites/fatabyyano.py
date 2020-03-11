@@ -10,6 +10,7 @@ import requests
 from bs4 import NavigableString
 
 from claim import Claim
+from yandex_translate import YandexTranslate
 
 
 class FatabyyanoFactCheckingSiteExtractor:
@@ -117,8 +118,6 @@ class FatabyyanoFactCheckingSiteExtractor:
             "section.l-section.wpb_row.height_small div[itemprop=\"text\"]").text
 
     def extract_links(self, parsed_claim_review_page: BeautifulSoup) -> str:
-        # css_selector qui selectionne la photo qui apparait avant les sources
-        # css_selector = "section:nth-of-type(3) img[alt*=\"المصادر\"] ,section:nth-of-type(3) img:last-child"
         links = ""
         links_tags = parsed_claim_review_page.select(
             "section.l-section.wpb_row.height_small div[itemprop=\"text\"] a")
@@ -168,10 +167,21 @@ class FatabyyanoFactCheckingSiteExtractor:
         return {
             "صحيح": "TRUE",
             "زائف جزئياً": "MIXTURE",
-            "عنوان مضلل": "MIXTURE",  # ?
+            "عنوان مضلل": "OTHER",  # ?
             "رأي": "OTHER",  # ? (Opinion)
             "ساخر": "OTHER",  # ? (Sarcastique)
             "غير مؤهل": "FALSE",  # ? (Inéligible)
             "خادع": "FALSE",  # ? (Trompeur)
             "زائف": "FALSE"
         }[initial_rating_value]
+
+    @staticmethod
+    def translate(text):
+        """
+            :text:  --> The text in arabic
+            :return:  --> return a translation of :text: in english
+        """
+
+        translate = YandexTranslate(
+            'trnsl.1.1.20200311T210815Z.796b747ff14857c9.2e7b856527d2689a26379ff56769f5b3c087f55b')
+        return translate.translate(text, 'ar-en')['text'][0]

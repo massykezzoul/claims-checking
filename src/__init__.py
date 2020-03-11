@@ -33,7 +33,8 @@ def main():
         review = fatabyyano.extract_review(webpage)
         rating_translate = f.FatabyyanoFactCheckingSiteExtractor.translate_rating_value(
             rating)
-        print(escape(source))
+        print("Claim : ")
+        print(f.FatabyyanoFactCheckingSiteExtractor.translate(claim))
 
 
 def escape(str):

@@ -14,12 +14,8 @@ from claim_extractor import Claim, Configuration
 from claim_extractor.extractors import FactCheckingSiteExtractor, caching
 
 
-
-
-
 class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
 
-   
     def __init__(self, configuration: Configuration):
         super().__init__(configuration)
 
@@ -34,8 +30,6 @@ class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
             s.extract()
         return soup
 
-   
-
     def retrieve_listing_page_urls(self) -> List[str]:
         """
             Abstract method. Retrieve the URLs of pages that allow access to a paginated list of claim reviews. This
@@ -45,8 +39,7 @@ class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
         """
         different_urls = []
         different_rating_value = [
-            "صحيح"
-            , "زائف-جزئياً", "زائف", "خادع", "ساخر", "عنوان-مضلل", "غير-مؤهل"]
+            "صحيح", "زائف-جزئياً", "زائف", "خادع", "ساخر", "عنوان-مضلل", "غير-مؤهل"]
         url_begin = "https://fatabyyano.net/newsface/"
         for value in different_rating_value:
             different_urls.append(url_begin+value+"/")
@@ -88,10 +81,12 @@ class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
 
     def extract_claim_and_review(self, parsed_claim_review_page: BeautifulSoup, url: str) -> List[Claim]:
         """ I think that this method extract everything """
-    
-        claim = Claim() 
-        claim.set_rating_value(self.extract_rating_value(parsed_claim_review_page))
-        claim.set_alternate_name(FatabyyanoFactCheckingSiteExtractor.translate_rating_value(self.extract_rating_value(parsed_claim_review_page)))
+
+        claim = Claim()
+        claim.set_rating_value(
+            self.extract_rating_value(parsed_claim_review_page))
+        claim.set_alternate_name(FatabyyanoFactCheckingSiteExtractor.translate_rating_value(
+            self.extract_rating_value(parsed_claim_review_page)))
         claim.set_source("fatabyyano")
         claim.set_claim(self.extract_claim(parsed_claim_review_page))
         claim.set_body(self.extract_review(parsed_claim_review_page))
@@ -110,17 +105,15 @@ class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
             return ""
 
     def extract_review(self, parsed_claim_review_page: BeautifulSoup) -> str:
-                return parsed_claim_review_page.select_one(
+        return parsed_claim_review_page.select_one(
             "section.l-section.wpb_row.height_small div[itemprop=\"text\"]").text
 
     def extract_links(self, parsed_claim_review_page: BeautifulSoup) -> str:
-        # css_selector qui selectionne la photo qui apparait avant les sources
-        css_selector = "section:nth-of-type(3) img[alt*=\"المصادر\"] ,section:nth-of-type(3) img:last-child"
         links = ""
         links_tags = parsed_claim_review_page.select(
-            "section.l-section.wpb_row.height_small a")
+            "section.l-section.wpb_row.height_small div[itemprop=\"text\"] a")
         for link_tag in links_tags:
-            if link_tag['href'] and "مصدر" in link_tag.text:
+            if link_tag['href']:
                 links += link_tag['href'] + ", "
         return links[:len(links)-1]
 

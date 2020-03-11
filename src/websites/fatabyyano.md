@@ -9,7 +9,7 @@
 - خادع --> FALSE? (Trompeur)
 - زائف --> FALSE
 
-# Clear cache 
+# Clear cache of redis
 - redis-cli flushall
 - redis-cli flushdb
 
