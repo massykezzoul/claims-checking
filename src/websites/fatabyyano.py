@@ -102,7 +102,7 @@ class FatabyyanoFactCheckingSiteExtractor:
         claim.set_date(self.extract_date(parsed_claim_review_page))
         claim.set_url(url)
         claim.set_tags(self.extract_tags(parsed_claim_review_page))
-
+        claim.set_entities(self.extract_entities(), "")
         return [claim]
 
     def extract_claim(self, parsed_claim_review_page: BeautifulSoup) -> str:
@@ -168,8 +168,14 @@ class FatabyyanoFactCheckingSiteExtractor:
             store the result in self.claim and self.review before calling this method
             :return: --> all entities in the claim and the review
         """
-        return self.tagme(self.translate(self.claim)) + \
+        list_ent = self.tagme(self.translate(self.claim)) + \
             self.tagme(self.translate(self.review))
+
+        str_ent = ""
+        for ent in list_ent:
+            str_ent = str_ent + " , " + str(ent)
+
+        return str_ent[3:]
 
     @staticmethod
     def translate_rating_value(initial_rating_value: str) -> str:
@@ -201,10 +207,9 @@ class FatabyyanoFactCheckingSiteExtractor:
             :return:  --> return a list of entities
         """
         tagme.GCUBE_TOKEN = "b6fdda4a-48d6-422b-9956-2fce877d9119-843339462"
-        lunch_annotations = tagme.annotate(text)
+        annotations = tagme.annotate(text)
 
-        # Print annotations with a score higher than 0.1
-        for ann in lunch_annotations.get_annotations(0.1):
-            print(ann.uri('en'))
-
-        return [""]
+        uris = []
+        for ann in annotations.get_annotations():
+            uris.append(ann.uri())
+        return uris

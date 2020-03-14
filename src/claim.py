@@ -3,6 +3,15 @@ from typing import Dict
 
 
 class Claim:
+    def set_entities(self, claim, body):
+        self.claim_entities = claim
+        self.body_entities = body
+
+    def get_claim_entities(self):
+        return self.claim_entities
+
+    def get_body_entities(self):
+        return self.body_entities
 
     def __init__(self):
         """
