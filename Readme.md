@@ -16,6 +16,9 @@ Vous devez avoir Python3 installer sur votre machine
 ```
 # On ubuntu for example
 sudo apt install python3
+
+# install all python requirements
+pip3 install -r requirements.txt
 ```
 
 ### Installation

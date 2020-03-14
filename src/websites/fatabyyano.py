@@ -11,12 +11,15 @@ from bs4 import NavigableString
 
 from claim import Claim
 from yandex_translate import YandexTranslate
+import tagme
 
 
 class FatabyyanoFactCheckingSiteExtractor:
 
     def __init__(self):
         # Configuration Here...
+        self.claim = ""
+        self.review = ""
         pass
 
     def get(self, url):
@@ -29,11 +32,6 @@ class FatabyyanoFactCheckingSiteExtractor:
         for s in soup.select("script, iframe, head, header, footer, style"):
             s.extract()
         return soup
-
-    def get_all_claims(self):
-        """ :return: all claims """
-        claims = []
-        return claims
 
     def retrieve_listing_page_urls(self) -> List[str]:
         """
@@ -86,6 +84,8 @@ class FatabyyanoFactCheckingSiteExtractor:
 
     def extract_claim_and_review(self, parsed_claim_review_page: BeautifulSoup, url: str) -> List[Claim]:
         """ I think that this method extract everything """
+        self.claim = self.extract_claim(parsed_claim_review_page)
+        self.review = self.extract_review(parsed_claim_review_page)
 
         claim = Claim()
         claim.set_rating_value(
@@ -95,8 +95,8 @@ class FatabyyanoFactCheckingSiteExtractor:
         claim.set_source("fatabyyano")
         claim.set_author("fatabyyano")
         claim.setDatePublished(self.extract_date(parsed_claim_review_page))
-        claim.set_claim(self.extract_claim(parsed_claim_review_page))
-        claim.set_body(self.extract_review(parsed_claim_review_page))
+        claim.set_claim(self.claim)
+        claim.set_body(self.review)
         claim.set_refered_links(self.extract_links(parsed_claim_review_page))
         claim.set_title(self.extract_claim(parsed_claim_review_page))
         claim.set_date(self.extract_date(parsed_claim_review_page))
@@ -162,6 +162,15 @@ class FatabyyanoFactCheckingSiteExtractor:
             # print("Something wrong in extracting rating value !")
             return ""
 
+    def extract_entities(self):
+        """
+            You sould call extract_claim and extract_review method and 
+            store the result in self.claim and self.review before calling this method
+            :return: --> all entities in the claim and the review
+        """
+        return self.tagme(self.translate(self.claim)) + \
+            self.tagme(self.translate(self.review))
+
     @staticmethod
     def translate_rating_value(initial_rating_value: str) -> str:
         return {
@@ -181,7 +190,21 @@ class FatabyyanoFactCheckingSiteExtractor:
             :text:  --> The text in arabic
             :return:  --> return a translation of :text: in english
         """
+        yandexAPI = 'trnsl.1.1.20200311T210815Z.796b747ff14857c9.2e7b856527d2689a26379ff56769f5b3c087f55b'
+        yandex = YandexTranslate(yandexAPI)
+        return yandex.translate(text, 'ar-en')['text'][0]
 
-        translate = YandexTranslate(
-            'trnsl.1.1.20200311T210815Z.796b747ff14857c9.2e7b856527d2689a26379ff56769f5b3c087f55b')
-        return translate.translate(text, 'ar-en')['text'][0]
+    @staticmethod
+    def tagme(text):
+        """
+            :text:  --> The text in english after translation
+            :return:  --> return a list of entities
+        """
+        tagme.GCUBE_TOKEN = "b6fdda4a-48d6-422b-9956-2fce877d9119-843339462"
+        lunch_annotations = tagme.annotate(text)
+
+        # Print annotations with a score higher than 0.1
+        for ann in lunch_annotations.get_annotations(0.1):
+            print(ann.uri('en'))
+
+        return [""]
