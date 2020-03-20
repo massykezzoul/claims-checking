@@ -1,17 +1,6 @@
 # Questions à propos du projet
 
-- Quand utilisé tagme?
-- Pourquoi les scripts python ne marche pas pour certains sites?
-- Quels sont les données minimum qu'on doit pouvoir extraire? (auteur, un titre, catégorie, une date ...?)
-  1. l'énoncé textuel de la claim
-  2. sa valeur de vérité ou sa cote (à la fois la valeur normalisée et la cote d'origine)
-  3. un lien vers la revue de la demande à partir du site web de vérification des faits
-  4. les références citées dans les revues de la demande
-  5. les entités extraites de l'organisme chargé de la demande et de l'organisme d'examen
-  6. l'auteur de la revendication et l'auteur de la revue
-  7. la date de publication de la revendication et celle de la revue
-  8. le titre de l'article de la revue
-  9. un ensemble de mots-clés extraits des sites web servant de sujets
+- Quel est le score minimum de l'entités pour l'accepter (score rho)
 
 ## Définitions
 
@@ -38,8 +27,3 @@
 - Factcheck_afp
 - Factuel_afp_fr
 - Fullfact
-
-## Idées de site web a intégré:
-
-- [NoRumors](http://norumors.net/) ~~> Arabie saoudite, en arabe.
-- [fatabyyano](https://fatabyyano.net/) ~~> Jordani, en Arabe, Fatabyyano ("فتبينوا" veut dire "Alors montre-le" en arabe) est la première et la seule plateforme arabe certifiée par l'[IFCN](https://ifcncodeofprinciples.poynter.org/).

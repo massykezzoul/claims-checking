@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 from typing import *
+import sys
 
 from bs4 import BeautifulSoup
 from dateparser.search import search_dates
@@ -11,7 +12,11 @@ from bs4 import NavigableString
 
 from claim import Claim
 from yandex_translate import YandexTranslate
+import json
+
 import tagme
+
+sys.path.append("../tagme")
 
 
 class FatabyyanoFactCheckingSiteExtractor:
@@ -102,7 +107,11 @@ class FatabyyanoFactCheckingSiteExtractor:
         claim.set_date(self.extract_date(parsed_claim_review_page))
         claim.set_url(url)
         claim.set_tags(self.extract_tags(parsed_claim_review_page))
-        claim.set_entities(self.extract_entities(), "")
+        # extract_entities returns two variables
+        json_claim, json_body = self.extract_entities()
+        claim.set_claim_entities(json_claim)
+        claim.set_body_entities(json_body)
+
         return [claim]
 
     def extract_claim(self, parsed_claim_review_page: BeautifulSoup) -> str:
@@ -166,16 +175,9 @@ class FatabyyanoFactCheckingSiteExtractor:
         """
             You sould call extract_claim and extract_review method and 
             store the result in self.claim and self.review before calling this method
-            :return: --> all entities in the claim and the review
+            :return: --> entities in the claim and the review in to different variable
         """
-        list_ent = self.tagme(self.translate(self.claim)) + \
-            self.tagme(self.translate(self.review))
-
-        str_ent = ""
-        for ent in list_ent:
-            str_ent = str_ent + " , " + str(ent)
-
-        return str_ent[3:]
+        return self.get_json_format(self.tagme(self.translate(self.claim))), self.get_json_format(self.tagme(self.translate(self.review)))
 
     @staticmethod
     def translate_rating_value(initial_rating_value: str) -> str:
@@ -207,9 +209,31 @@ class FatabyyanoFactCheckingSiteExtractor:
             :return:  --> return a list of entities
         """
         tagme.GCUBE_TOKEN = "b6fdda4a-48d6-422b-9956-2fce877d9119-843339462"
-        annotations = tagme.annotate(text)
+        return tagme.annotate(text)
 
-        uris = []
-        for ann in annotations.get_annotations():
-            uris.append(ann.uri())
-        return uris
+    # write this method (and tagme, translate) in an another file cause we can use it in other websites
+    @staticmethod
+    def get_json_format(tagme_entity):
+        '''
+            :tagme_entity: must be an object of AnnotateResposte Class returned by tagme function
+        '''
+        data_set = []
+        i = 0
+        min_rho = 0.1
+
+        for annotation in tagme_entity.get_annotations(min_rho):
+            entity = {}
+            entity["id"] = annotation.entity_id
+            entity["begin"] = annotation.begin
+            entity["end"] = annotation.end
+            entity["entity"] = annotation.entity_title
+            entity["text"] = annotation.mention
+            entity["score"] = annotation.score
+            entity["categories"] = []
+            if tagme_entity.original_json["annotations"][i]["rho"] > min_rho:
+                for categorie in tagme_entity.original_json["annotations"][i]["dbpedia_categories"]:
+                    entity["categories"].append(categorie)
+            i = i + 1
+            data_set.append(entity)
+
+        return json.dumps(data_set)

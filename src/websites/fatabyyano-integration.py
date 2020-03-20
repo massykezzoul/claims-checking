@@ -13,6 +13,10 @@ from claim_extractor.extractors import caching
 from claim_extractor import Claim, Configuration
 from claim_extractor.extractors import FactCheckingSiteExtractor, caching
 
+from claim_extractor import tagme
+from yandex_translate import YandexTranslate
+import json
+
 
 class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
 
@@ -80,7 +84,8 @@ class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
         return result
 
     def extract_claim_and_review(self, parsed_claim_review_page: BeautifulSoup, url: str) -> List[Claim]:
-        """ I think that this method extract everything """
+        self.claim = self.extract_claim(parsed_claim_review_page)
+        self.review = self.extract_review(parsed_claim_review_page)
 
         claim = Claim()
         claim.set_rating_value(
@@ -88,11 +93,19 @@ class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
         claim.set_alternate_name(FatabyyanoFactCheckingSiteExtractor.translate_rating_value(
             self.extract_rating_value(parsed_claim_review_page)))
         claim.set_source("fatabyyano")
-        claim.set_claim(self.extract_claim(parsed_claim_review_page))
-        claim.set_body(self.extract_review(parsed_claim_review_page))
+        claim.set_author("fatabyyano")
+        claim.setDatePublished(self.extract_date(parsed_claim_review_page))
+        claim.set_claim(self.claim)
+        claim.set_body(self.review)
+        claim.set_refered_links(self.extract_links(parsed_claim_review_page))
+        claim.set_title(self.extract_claim(parsed_claim_review_page))
         claim.set_date(self.extract_date(parsed_claim_review_page))
         claim.set_url(url)
         claim.set_tags(self.extract_tags(parsed_claim_review_page))
+        # extract_entities returns two variables
+        json_claim, json_body = self.extract_entities()
+        claim.set_claim_entities(json_claim)
+        claim.set_body_entities(json_body)
 
         return [claim]
 
@@ -132,7 +145,7 @@ class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
             :return:                    --> return a list of tags that are related to the claim
         """
         tags_link = parsed_claim_review_page.select(
-            "div.w-post-elm.post_taxonomy.style_simple a")
+            "div.w-post-elm.post_taxonomy.style_simple a[rel=\"tag\"]")
         tags = ""
         for tag_link in tags_link:
             if tag_link.text:
@@ -153,15 +166,69 @@ class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
             # print("Something wrong in extracting rating value !")
             return ""
 
+    def extract_entities(self):
+        """
+            You sould call extract_claim and extract_review method and 
+            store the result in self.claim and self.review before calling this method
+            :return: --> entities in the claim and the review in to different variable
+        """
+        return self.get_json_format(self.tagme(self.translate(self.claim))), self.get_json_format(self.tagme(self.translate(self.review)))
+
     @staticmethod
     def translate_rating_value(initial_rating_value: str) -> str:
         return {
             "صحيح": "TRUE",
             "زائف جزئياً": "MIXTURE",
-            "عنوان مضلل": "MIXTURE",  # ?
+            "عنوان مضلل": "OTHER",  # ?
             "رأي": "OTHER",  # ? (Opinion)
             "ساخر": "OTHER",  # ? (Sarcastique)
             "غير مؤهل": "FALSE",  # ? (Inéligible)
             "خادع": "FALSE",  # ? (Trompeur)
             "زائف": "FALSE"
         }[initial_rating_value]
+
+    @staticmethod
+    def translate(text):
+        """
+            :text:  --> The text in arabic
+            :return:  --> return a translation of :text: in english
+        """
+        yandexAPI = 'trnsl.1.1.20200311T210815Z.796b747ff14857c9.2e7b856527d2689a26379ff56769f5b3c087f55b'
+        yandex = YandexTranslate(yandexAPI)
+        return yandex.translate(text, 'ar-en')['text'][0]
+
+    @staticmethod
+    def tagme(text):
+        """
+            :text:  --> The text in english after translation
+            :return:  --> return a list of entities
+        """
+        tagme.GCUBE_TOKEN = "b6fdda4a-48d6-422b-9956-2fce877d9119-843339462"
+        return tagme.annotate(text)
+
+    # write this method (and tagme, translate) in an another file cause we can use it in other websites
+    @staticmethod
+    def get_json_format(tagme_entity):
+        '''
+            :tagme_entity: must be an object of AnnotateResposte Class returned by tagme function
+        '''
+        data_set = []
+        i = 0
+        min_rho = 0.1
+
+        for annotation in tagme_entity.get_annotations(min_rho):
+            entity = {}
+            entity["id"] = annotation.entity_id
+            entity["begin"] = annotation.begin
+            entity["end"] = annotation.end
+            entity["entity"] = annotation.entity_title
+            entity["text"] = annotation.mention
+            entity["score"] = annotation.score
+            entity["categories"] = []
+            if tagme_entity.original_json["annotations"][i]["rho"] > min_rho:
+                for categorie in tagme_entity.original_json["annotations"][i]["dbpedia_categories"]:
+                    entity["categories"].append(categorie)
+            i = i + 1
+            data_set.append(entity)
+
+        return json.dumps(data_set)

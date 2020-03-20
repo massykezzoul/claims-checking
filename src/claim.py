@@ -3,16 +3,6 @@ from typing import Dict
 
 
 class Claim:
-    def set_entities(self, claim, body):
-        self.claim_entities = claim
-        self.body_entities = body
-
-    def get_claim_entities(self):
-        return self.claim_entities
-
-    def get_body_entities(self):
-        return self.body_entities
-
     def __init__(self):
         """
         Default constructor, see other constructor to build object from dictionary
@@ -157,3 +147,9 @@ class Claim:
 
     def set_tags(self, str_):
         self.tags = str_
+
+    def set_claim_entities(self, str_):
+        self.claim_entities = str_
+
+    def set_body_entities(self, str_):
+        self.body_entities = str_
