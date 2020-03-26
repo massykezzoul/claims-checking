@@ -38,6 +38,16 @@ class VishvasnewsFactCheckingSiteExtractor:
             s.extract()
         return soup
 
+    def post(self, url, data):
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'}
+        html = requests.post(url, data=data).text
+        soup = BeautifulSoup(html, 'lxml')
+        # removing some useless tags
+        for s in soup.select("script, iframe, head, header, footer, style"):
+            s.extract()
+        return soup
+
     def retrieve_listing_page_urls(self) -> List[str]:
         """
             Abstract method. Retrieve the URLs of pages that allow access to a paginated list of claim reviews. This
@@ -46,10 +56,10 @@ class VishvasnewsFactCheckingSiteExtractor:
             :return: Return a list of listing page urls
         """
         different_urls = []
-        different_rating_value = [
-            "True", "Misleading","False"]
-        url_begin = ""
-        for value in different_rating_value:
+        different_categories_value = [
+            "politics", "society", "world", "viral", "health"]
+        url_begin = "https://www.vishvasnews.com/english/"
+        for value in different_categories_value:
             different_urls.append(url_begin+value+"/")
         return different_urls
 
@@ -60,17 +70,55 @@ class VishvasnewsFactCheckingSiteExtractor:
             :param parsed_listing_page:
             :return: The page count if relevant, otherwise None or a negative integer
         """
-        return 
+        return -1
 
-    def retrieve_urls(self, parsed_claim_review_page: BeautifulSoup, listing_page_url: str, begin: int, number_of_pages: int) -> List[str]:
+    def retrieve_urls(self, parsed_listing_page: BeautifulSoup, listing_page_url: str, begin: int, number_of_pages: int) -> List[str]:
         """
             :parsed_listing_page: --> une page (parsed) qui liste des claims
             :listing_page_url:    --> l'url associé à la page ci-dessus
             :number_of_page:      --> number_of_page
             :return:              --> la liste des url de toutes les claims
         """
-       
-        return r
+        links = []
+        select_links = 'ul.listing li div.imagecontent h3 a'
+        # links in the static page
+        claims = parsed_listing_page.select(
+            "div.ajax-data-load " + select_links)
+        for link in claims:
+            if link["href"]:
+                links.append(link["href"])
+
+        # for links loaded by AJAX
+        r = re.compile(
+            "https://www.vishvasnews.com/(.*)/(.*)[/]").match(listing_page_url)
+
+        lang = r.group(1)
+        categorie = r.group(2)
+
+        url_ajax = "https://www.vishvasnews.com/wp-admin/admin-ajax.php"
+        data = {
+            'action': 'ajax_pagination',
+            'query_vars': '{"category_name" : "' + categorie + '", "lang" : "' + lang + '"}',
+            'page': 1,
+            'loadPage': 'file-archive-posts-part'
+        }
+
+        response = self.post(url_ajax, data)
+
+        while True:
+            claims = response.select(select_links)
+            for link in claims:
+                if link['href']:
+                    links.append(link['href'])
+
+            if response.find("nav"):
+                data['page'] = data['page'] + 1
+                response = self.post(url_ajax, data)
+                continue
+            else:
+                break
+
+        return links
 
     def extract_claim_and_review(self, parsed_claim_review_page: BeautifulSoup, url: str) -> List[Claim]:
         """ I think that this method extract everything """
@@ -91,7 +139,7 @@ class VishvasnewsFactCheckingSiteExtractor:
 
 
     def extract_review(self, parsed_claim_review_page: BeautifulSoup) -> str:
-        return 
+        return
 
     def extract_links(self, parsed_claim_review_page: BeautifulSoup) -> str:
         links = []
@@ -105,7 +153,7 @@ class VishvasnewsFactCheckingSiteExtractor:
 
     def extract_date(self, parsed_claim_review_page: BeautifulSoup) -> str:
 
-        return 
+        return
 
     def extract_tags(self, parsed_claim_review_page: BeautifulSoup) -> str:
         """
@@ -120,7 +168,7 @@ class VishvasnewsFactCheckingSiteExtractor:
         return ""
 
     def extract_rating_value(self, parsed_claim_review_page: BeautifulSoup) -> str:
-          btn = parsed_claim_review_page.select_one(
+        btn = parsed_claim_review_page.select_one(
             "div.selected span")
         if btn:
             return btn.text
@@ -128,9 +176,8 @@ class VishvasnewsFactCheckingSiteExtractor:
             return ""
             
     def extract_entities(self):
-        
-        return
 
+        return
 
     @staticmethod
     def translate(text):
@@ -138,7 +185,7 @@ class VishvasnewsFactCheckingSiteExtractor:
             :text:  --> The text in arabic
             :return:  --> return a translation of :text: in english
         """
-       
+
         return
 
     @staticmethod
@@ -147,12 +194,11 @@ class VishvasnewsFactCheckingSiteExtractor:
             :text:  --> The text in english after translation
             :return:  --> return a list of entities
         """
-       
-        return 
+
+        return
 
     # write this method (and tagme, translate) in an another file cause we can use it in other websites
     @staticmethod
     def get_json_format(tagme_entity):
-        
 
-        return 
+        return
