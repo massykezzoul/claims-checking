@@ -10,11 +10,11 @@ from tqdm import tqdm
 import requests
 from bs4 import NavigableString
 
-from claim import Claim
-from yandex_translate import YandexTranslate
+""" from claim import Claim
+from yandex_translate import YandexTranslate """
 import json
 
-import tagme
+""" import tagme """
 
 sys.path.append("../tagme")
 
@@ -120,15 +120,15 @@ class VishvasnewsFactCheckingSiteExtractor:
 
         return links
 
-    def extract_claim_and_review(self, parsed_claim_review_page: BeautifulSoup, url: str) -> List[Claim]:
-        """ I think that this method extract everything """
+    """ def extract_claim_and_review(self, parsed_claim_review_page: BeautifulSoup, url: str) -> List[Claim]:
+        """  """
 
-        return [claim]
+        return [claim] """
 
-    def extract_claim(self, parsed_claim_review_page: BeautifulSoup) -> str:
+    """ def extract_claim(self, parsed_claim_review_page: BeautifulSoup) -> str:
         claim = parsed_claim_review_page.find(div , class_=lhs-area)
 
-        return 
+        return """ 
 
     def extract_title(self, parsed_claim_review_page : BeautifulSoup) -> str:
         title = parsed_claim_review_page.find(h1 , class_=article-heading)
