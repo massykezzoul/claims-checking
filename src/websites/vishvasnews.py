@@ -78,14 +78,30 @@ class VishvasnewsFactCheckingSiteExtractor:
         return [claim]
 
     def extract_claim(self, parsed_claim_review_page: BeautifulSoup) -> str:
+        claim = parsed_claim_review_page.find(div , class_=lhs-area)
+
         return 
+
+    def extract_title(self, parsed_claim_review_page : BeautifulSoup) -> str:
+        title = parsed_claim_review_page.find(h1 , class_=article-heading)
+        if title:
+            return title.text
+        else:
+            return ""
+
 
     def extract_review(self, parsed_claim_review_page: BeautifulSoup) -> str:
         return 
 
     def extract_links(self, parsed_claim_review_page: BeautifulSoup) -> str:
+        links = []
+        links_tags = parsed_claim_review_page.find(div , class_=lhs-area)
+        
+        for link_tag in links_tags.findAll('a', href=True):
+                links.append(link_tag['href']+",")
+                
+        return links
        
-        return
 
     def extract_date(self, parsed_claim_review_page: BeautifulSoup) -> str:
 
@@ -96,15 +112,21 @@ class VishvasnewsFactCheckingSiteExtractor:
             :parsed_claim_review_page:  --> the parsed web page of the claim
             :return:                    --> return a list of tags that are related to the claim
         """
-    
+
+
         return 
 
     def extract_author(self, parsed_claim_review_page: BeautifulSoup) -> str:
         return ""
 
     def extract_rating_value(self, parsed_claim_review_page: BeautifulSoup) -> str:
-        return ""
-
+          btn = parsed_claim_review_page.select_one(
+            "div.selected span")
+        if btn:
+            return btn.text
+        else: 
+            return ""
+            
     def extract_entities(self):
         
         return
