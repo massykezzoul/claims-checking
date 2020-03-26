@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 from typing import *
+import sys
 
 from bs4 import BeautifulSoup
 from dateparser.search import search_dates
@@ -15,10 +16,15 @@ from claim_extractor.extractors import FactCheckingSiteExtractor, caching
 
 from claim_extractor import tagme
 from yandex_translate import YandexTranslate
+from yandex_translate import YandexTranslateException
 import json
+import math
 
 
 class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
+    # Constants
+    YANDEX_API_KEY = 'trnsl.1.1.20200322T172225Z.d4230973262b4d47.2a7e5fe0d388910d59eeaa77cc594c906961fa1a'
+    TAGME_API_KEY = 'b6fdda4a-48d6-422b-9956-2fce877d9119-843339462'
 
     def __init__(self, configuration: Configuration):
         super().__init__(configuration)
@@ -112,14 +118,14 @@ class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
     def extract_claim(self, parsed_claim_review_page: BeautifulSoup) -> str:
         claim = parsed_claim_review_page.select_one("h1.post_title")
         if claim:
-            return claim.text
+            return self.escape(claim.text)
         else:
             # print("something wrong in extracting claim")
             return ""
 
     def extract_review(self, parsed_claim_review_page: BeautifulSoup) -> str:
-        return parsed_claim_review_page.select_one(
-            "section.l-section.wpb_row.height_small div[itemprop=\"text\"]").text
+        return self.escape(parsed_claim_review_page.select_one(
+            "section.l-section.wpb_row.height_small div[itemprop=\"text\"]").text)
 
     def extract_links(self, parsed_claim_review_page: BeautifulSoup) -> str:
         links = ""
@@ -168,7 +174,7 @@ class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
 
     def extract_entities(self):
         """
-            You sould call extract_claim and extract_review method and 
+            You should call extract_claim and extract_review method and 
             store the result in self.claim and self.review before calling this method
             :return: --> entities in the claim and the review in to different variable
         """
@@ -188,14 +194,54 @@ class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
         }[initial_rating_value]
 
     @staticmethod
-    def translate(text):
+    def translate(text: str) -> str:
         """
             :text:  --> The text in arabic
             :return:  --> return a translation of :text: in english
         """
-        yandexAPI = 'trnsl.1.1.20200311T210815Z.796b747ff14857c9.2e7b856527d2689a26379ff56769f5b3c087f55b'
+        self = FatabyyanoFactCheckingSiteExtractor
+        yandexAPI = self.YANDEX_API_KEY
         yandex = YandexTranslate(yandexAPI)
-        return yandex.translate(text, 'ar-en')['text'][0]
+
+        responses = []
+        try:
+            response = yandex.translate(text, 'ar-en')
+            responses = [response]
+            text_too_long = False
+        except YandexTranslateException as e:
+            if e.args == 'ERR_TEXT_TOO_LONG':
+                text_too_long = True
+            else:
+                print("Erreur API Yandex\nCode d'erreur : " + str(e.args))
+                sys.exit(1)
+
+        text_list = [text]
+
+        while text_too_long:
+            text_too_long = False
+            try:
+                text_list = self.cut_str(text_list)
+            except ValueError:
+                print("Erreur ")
+                sys.exit(1)
+            responses = []
+            for t in text_list:
+                try:
+                    responses.append(yandex.translate(t, 'ar-en'))
+                except YandexTranslateException:
+                    text_too_long = True
+                    continue
+
+        text_list = []
+        for r in responses:
+            if int(r['code'] != 200):
+                print(
+                    "Erreur lors de la traduction\nCode de l'erreur : " + r['code'])
+                sys.exit(1)
+            else:
+                text_list.append(r['text'][0])
+
+        return self.concat_str(text_list)
 
     @staticmethod
     def tagme(text):
@@ -203,7 +249,7 @@ class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
             :text:  --> The text in english after translation
             :return:  --> return a list of entities
         """
-        tagme.GCUBE_TOKEN = "b6fdda4a-48d6-422b-9956-2fce877d9119-843339462"
+        tagme.GCUBE_TOKEN = FatabyyanoFactCheckingSiteExtractor.TAGME_API_KEY
         return tagme.annotate(text)
 
     # write this method (and tagme, translate) in an another file cause we can use it in other websites
@@ -232,3 +278,39 @@ class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
             data_set.append(entity)
 
         return json.dumps(data_set)
+
+    @staticmethod
+    def cut_str(str_list):
+        # cut string
+        result_list = []
+
+        for string in str_list:
+            middle = math.floor(len(string) / 2)
+            before = string.rindex(' ', 0, middle)
+            after = string.index(' ', middle + 1)
+
+            if middle - before < after - middle:
+                middle = before
+            else:
+                middle = after
+
+            result_list.append(string[:middle])
+            result_list.append(string[middle + 1:])
+
+        return result_list
+
+    @staticmethod
+    def concat_str(str_list):
+        result = ""
+
+        for string in str_list:
+            result = result + ' ' + string
+
+        return result[1:]
+
+    @staticmethod
+    def escape(str):
+        # define this fucntion as a method of the class Fatabyyano...
+        str = str.replace("ﷺ", "صَلَّىٰ ٱللَّٰهُ عَلَيْهِ وَسَلَّمَ").replace(
+            "\n", " ").replace('"', "'").replace('\\n', '\n')
+        return str
