@@ -2,11 +2,11 @@
 
 - صحيح --> TRUE
 - زائف جزئياً --> MIXTURE
-- عنوان مضلل --> OTHER?
-- رأي --> OTHER? (Opinion)
-- ساخر --> OTHER? (Sarcastique)
-- غير مؤهل --> FALSE? (Inéligible)
-- خادع --> FALSE? (Trompeur)
+- عنوان مضلل --> MIXTURE
+- رأي --> OTHER (Opinion)
+- ساخر --> OTHER (Sarcastique)
+- غير مؤهل -->  OTHER (Inéligible)
+- خادع --> FALSE (Trompeur)
 - زائف --> FALSE
 
 # Clear cache of redis
