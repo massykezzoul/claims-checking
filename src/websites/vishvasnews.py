@@ -171,7 +171,16 @@ class VishvasnewsFactCheckingSiteExtractor:
             : parsed_claim_review_page: - -> the parsed web page of the claim
             : return: - -> return a list of tags that are related to the claim
         """
-        return
+        tags = []
+        ul = parsed_claim_review_page.find("ul", class_="tags")
+        for tag in ul.find_all("li") :
+            tags.append(tag.a.text)
+
+        if tags:
+            return tags
+        else :
+            return ""
+        
 
     def extract_author(self, parsed_claim_review_page: BeautifulSoup) -> str:
         

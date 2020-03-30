@@ -17,12 +17,13 @@ def vishvas():
     claim = vishvas.extract_claim(webpage)
     rating = vishvas.extract_rating_value(webpage)
     authors = vishvas.extract_author(webpage)
+    tags = vishvas.extract_tags(webpage)
 
     print('rating : "' + rating + '"')
     print('title : "' + title + '"')
     print('claim : "' + claim + '"')
-    print('authors ' , *authors, sep = ": ")  
-  
+    print('authors :' , *authors, sep = ", ")  
+    print('tags :',*tags, sep=", ")
   
 
 
