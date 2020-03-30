@@ -11,14 +11,16 @@ sys.path.append("websites")
 def vishvas():
     vishvas = v.VishvasnewsFactCheckingSiteExtractor()
 
-    claim_url = "https://www.vishvasnews.com/english/world/fact-check-no-this-is-not-the-image-of-an-indian-soldier/?fbclid=IwAR0TG7zEzGhuHq19jcASWlfK8WPc2DQsV0g-Ki-43hOrS7pUfmqloPSL5dw/"
+    claim_url = "https://www.vishvasnews.com/english/viral/fact-check-no-nasa-didnt-have-58-indian-employees-misleading-post-getting-viral/"
     webpage = vishvas.get(claim_url)
     title = vishvas.extract_title(webpage)
     claim = vishvas.extract_claim(webpage)
     rating = vishvas.extract_rating_value(webpage)
+    date = vishvas.extract_date(webpage)
     authors = vishvas.extract_author(webpage)
     tags = vishvas.extract_tags(webpage)
 
+    print('date : "' + date + '"')
     print('rating : "' + rating + '"')
     print('title : "' + title + '"')
     print('claim : "' + claim + '"')
