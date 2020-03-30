@@ -132,21 +132,26 @@ class VishvasnewsFactCheckingSiteExtractor:
         return
 
     def extract_links(self, parsed_claim_review_page: BeautifulSoup) -> str:
+
         links = []
+        # extracting the main article body
         review_body = parsed_claim_review_page.select_one(
             "div.lhs-area")
-
+        # removing the social-media sahres links
         review_body.select_one('ul.social-icons-details').decompose()
+
+        # removing authors  & tag  links
         b = False
-        for tag in review_body.children:
-            print(type(tag))
-            if tag["class"] == "reviews":
+
+        # ( > * ) ==> direct children in css
+        for tag in review_body.select("> *"):
+            if tag.get('class') and "reviews" in tag.get('class'):
                 b = True
             if b:
                 tag.decompose()
             else:
                 continue
-
+        # extracting links
         for link_tag in review_body.select('a'):
             if link_tag.has_attr('href'):
                 links.append(link_tag['href'])
