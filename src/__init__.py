@@ -11,15 +11,18 @@ sys.path.append("websites")
 def vishvas():
     vishvas = v.VishvasnewsFactCheckingSiteExtractor()
 
-    claim_url = "https://www.vishvasnews.com/english/health/fact-check-no-bitter-guard-juice-cannot-cure-novel-coronavirus-health-experts-refute-the-viral-claim/"
+    claim_url = "https://www.vishvasnews.com/english/world/fact-check-no-this-is-not-the-image-of-an-indian-soldier/?fbclid=IwAR0TG7zEzGhuHq19jcASWlfK8WPc2DQsV0g-Ki-43hOrS7pUfmqloPSL5dw/"
     webpage = vishvas.get(claim_url)
     title = vishvas.extract_title(webpage)
     claim = vishvas.extract_claim(webpage)
     rating = vishvas.extract_rating_value(webpage)
+    authors = vishvas.extract_author(webpage)
 
     print('rating : "' + rating + '"')
     print('title : "' + title + '"')
     print('claim : "' + claim + '"')
+    print('authors ' , *authors, sep = ": ")  
+  
   
 
 
