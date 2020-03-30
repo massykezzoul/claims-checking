@@ -5,8 +5,6 @@ from websites import vishvasnews as v
 from claim import Claim
 import sys
 
-import requests
-
 sys.path.append("websites")
 
 
@@ -15,8 +13,9 @@ def vishvas():
     listing_pages = vishvas.retrieve_listing_page_urls()
     links = []
     for listing in listing_pages:
+        print("getting from '"+listing+"'...")
         webpage = vishvas.get(listing)
-        links.append(vishvas.retrieve_urls(webpage, listing, 0, 0))
+        links = links + vishvas.retrieve_urls(webpage, listing, 0, 0)
 
     print("Nombre de liens trouver " + str(len(links)))
 
