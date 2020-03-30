@@ -119,7 +119,11 @@ class VishvasnewsFactCheckingSiteExtractor:
         return [claim]
 
     def extract_claim(self, parsed_claim_review_page: BeautifulSoup) -> str:
-        return ""
+        claim = parsed_claim_review_page.find("ul", class_="claim-review")
+        if claim:
+            return claim.li.span.text
+        else :
+            return ""
 
     def extract_title(self, parsed_claim_review_page: BeautifulSoup) -> str:
         title = parsed_claim_review_page.find("h1", class_="article-heading")
