@@ -14,10 +14,13 @@ def vishvas():
     claim_url = "https://www.vishvasnews.com/english/health/fact-check-no-bitter-guard-juice-cannot-cure-novel-coronavirus-health-experts-refute-the-viral-claim/"
     webpage = vishvas.get(claim_url)
     title = vishvas.extract_title(webpage)
-    links = vishvas.extract_links(webpage)
+    claim = vishvas.extract_claim(webpage)
+    rating = vishvas.extract_rating_value(webpage)
 
+    print('rating : "' + rating + '"')
     print('title : "' + title + '"')
-    print('links : "' + str(links) + '"')
+    print('claim : "' + claim + '"')
+  
 
 
 def fatabyyano():
