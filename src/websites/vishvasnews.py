@@ -179,7 +179,15 @@ class VishvasnewsFactCheckingSiteExtractor:
         return
 
     def extract_author(self, parsed_claim_review_page: BeautifulSoup) -> str:
-        return ""
+        
+        authors = []
+
+        for author in parsed_claim_review_page.find_all("li", class_="name") :
+            authors.append(author.a.text)
+        if authors:
+            return authors    
+        else :
+            return ""
 
     def extract_rating_value(self, parsed_claim_review_page: BeautifulSoup) -> str:
         btn = parsed_claim_review_page.select_one(

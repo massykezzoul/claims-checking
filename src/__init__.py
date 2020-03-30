@@ -17,10 +17,13 @@ def vishvas():
     claim = vishvas.extract_claim(webpage)
     rating = vishvas.extract_rating_value(webpage)
     date = vishvas.extract_date(webpage)
+    authors = vishvas.extract_author(webpage)
+
+    print('date : "' + date + '"')
     print('rating : "' + rating + '"')
     print('title : "' + title + '"')
     print('claim : "' + claim + '"')
-    print('date : "' + date + '"')
+    print('authors ', *authors, sep=": ")
 
 
 def fatabyyano():
