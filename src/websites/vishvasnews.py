@@ -10,13 +10,8 @@ from tqdm import tqdm
 import requests
 from bs4 import NavigableString
 
-""" from claim import Claim
-from yandex_translate import YandexTranslate """
+from claim import Claim
 import json
-
-""" import tagme """
-
-sys.path.append("../tagme")
 
 
 class VishvasnewsFactCheckingSiteExtractor:
@@ -35,17 +30,17 @@ class VishvasnewsFactCheckingSiteExtractor:
         soup = BeautifulSoup(html, 'lxml')
         # removing some useless tags
         for s in soup.select("script, iframe, head, header, footer, style"):
-            s.extract()
+            s.decompose()
         return soup
 
     def post(self, url, data):
         headers = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'}
-        html = requests.post(url, data=data).text
+        html = requests.post(url, data=data, header=headers).text
         soup = BeautifulSoup(html, 'lxml')
         # removing some useless tags
         for s in soup.select("script, iframe, head, header, footer, style"):
-            s.extract()
+            s.decompose()
         return soup
 
     def retrieve_listing_page_urls(self) -> List[str]:
@@ -120,36 +115,43 @@ class VishvasnewsFactCheckingSiteExtractor:
 
         return links
 
-    """ def extract_claim_and_review(self, parsed_claim_review_page: BeautifulSoup, url: str) -> List[Claim]:
-        """  """
+    def extract_claim_and_review(self, parsed_claim_review_page: BeautifulSoup, url: str) -> List[Claim]:
+        return [claim]
 
-        return [claim] """
+    def extract_claim(self, parsed_claim_review_page: BeautifulSoup) -> str:
+        return ""
 
-    """ def extract_claim(self, parsed_claim_review_page: BeautifulSoup) -> str:
-        claim = parsed_claim_review_page.find(div , class_=lhs-area)
-
-        return """ 
-
-    def extract_title(self, parsed_claim_review_page : BeautifulSoup) -> str:
-        title = parsed_claim_review_page.find(h1 , class_=article-heading)
+    def extract_title(self, parsed_claim_review_page: BeautifulSoup) -> str:
+        title = parsed_claim_review_page.find("h1", class_="article-heading")
         if title:
-            return title.text
+            return title.text.strip()
         else:
             return ""
-
 
     def extract_review(self, parsed_claim_review_page: BeautifulSoup) -> str:
         return
 
     def extract_links(self, parsed_claim_review_page: BeautifulSoup) -> str:
         links = []
-        links_tags = parsed_claim_review_page.find(div , class_=lhs-area)
-        
-        for link_tag in links_tags.findAll('a', href=True):
-                links.append(link_tag['href']+",")
-                
+        review_body = parsed_claim_review_page.select_one(
+            "div.lhs-area")
+
+        review_body.select_one('ul.social-icons-details').decompose()
+        b = False
+        for tag in review_body.children:
+            print(type(tag))
+            if tag["class"] == "reviews":
+                b = True
+            if b:
+                tag.decompose()
+            else:
+                continue
+
+        for link_tag in review_body.select('a'):
+            if link_tag.has_attr('href'):
+                links.append(link_tag['href'])
+
         return links
-       
 
     def extract_date(self, parsed_claim_review_page: BeautifulSoup) -> str:
 
@@ -157,12 +159,10 @@ class VishvasnewsFactCheckingSiteExtractor:
 
     def extract_tags(self, parsed_claim_review_page: BeautifulSoup) -> str:
         """
-            :parsed_claim_review_page:  --> the parsed web page of the claim
-            :return:                    --> return a list of tags that are related to the claim
+            : parsed_claim_review_page: - -> the parsed web page of the claim
+            : return: - -> return a list of tags that are related to the claim
         """
-
-
-        return 
+        return
 
     def extract_author(self, parsed_claim_review_page: BeautifulSoup) -> str:
         return ""
@@ -172,9 +172,9 @@ class VishvasnewsFactCheckingSiteExtractor:
             "div.selected span")
         if btn:
             return btn.text
-        else: 
+        else:
             return ""
-            
+
     def extract_entities(self):
 
         return
@@ -182,8 +182,8 @@ class VishvasnewsFactCheckingSiteExtractor:
     @staticmethod
     def translate(text):
         """
-            :text:  --> The text in arabic
-            :return:  --> return a translation of :text: in english
+            : text: - -> The text in arabic
+            : return: - -> return a translation of: text: in english
         """
 
         return
@@ -191,10 +191,9 @@ class VishvasnewsFactCheckingSiteExtractor:
     @staticmethod
     def tagme(text):
         """
-            :text:  --> The text in english after translation
-            :return:  --> return a list of entities
+            : text: - -> The text in english after translation
+            : return: - -> return a list of entities
         """
-
         return
 
     # write this method (and tagme, translate) in an another file cause we can use it in other websites
