@@ -122,7 +122,7 @@ class VishvasnewsFactCheckingSiteExtractor:
         claim = parsed_claim_review_page.find("ul", class_="claim-review")
         if claim:
             return claim.li.span.text
-        else :
+        else:
             return ""
 
     def extract_title(self, parsed_claim_review_page: BeautifulSoup) -> str:
@@ -163,6 +163,11 @@ class VishvasnewsFactCheckingSiteExtractor:
         return links
 
     def extract_date(self, parsed_claim_review_page: BeautifulSoup) -> str:
+        date = parsed_claim_review_page.select("ul.updated li")[1]
+        if date:
+            return date.text.strip()
+        else:
+            return ""
 
         return
 
