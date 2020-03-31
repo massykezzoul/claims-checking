@@ -13,6 +13,10 @@ from bs4 import NavigableString
 from claim import Claim
 import json
 
+# new
+import copy  # to clone beautifulSoup nodes
+import calendar
+
 
 class VishvasnewsFactCheckingSiteExtractor:
 
@@ -36,7 +40,7 @@ class VishvasnewsFactCheckingSiteExtractor:
     def post(self, url, data):
         headers = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'}
-        html = requests.post(url, data=data, header=headers).text
+        html = requests.post(url, data=data, headers=headers).text
         soup = BeautifulSoup(html, 'lxml')
         # removing some useless tags
         for s in soup.select("script, iframe, head, header, footer, style"):
@@ -118,6 +122,11 @@ class VishvasnewsFactCheckingSiteExtractor:
     def extract_claim_and_review(self, parsed_claim_review_page: BeautifulSoup, url: str) -> List[Claim]:
         return [claim]
 
+    def is_claim(self, parsed_claim_review_page: BeautifulSoup) -> bool:
+        rating_value = parsed_claim_review_page.select_one(
+            "div.selected span")
+        return bool(rating_value)
+
     def extract_claim(self, parsed_claim_review_page: BeautifulSoup) -> str:
         claim = parsed_claim_review_page.find("ul", class_="claim-review")
         if claim:
@@ -133,29 +142,31 @@ class VishvasnewsFactCheckingSiteExtractor:
             return ""
 
     def extract_review(self, parsed_claim_review_page: BeautifulSoup) -> str:
-        
+
         return
 
-    def extract_claimed_by(self , parsed_claim_review_page: BeautifulSoup) -> str:
+    def extract_claimed_by(self, parsed_claim_review_page: BeautifulSoup) -> str:
         infos = []
-        
+
         review = parsed_claim_review_page.find("ul", class_="claim-review")
-        for info in review.find_all("li") :
+        for info in review.find_all("li"):
             infos.append(info.span.text)
 
-        
         if infos[1]:
             return infos[1]
-        else :
-            return ""    
-
+        else:
+            return ""
 
     def extract_links(self, parsed_claim_review_page: BeautifulSoup) -> str:
 
         links = []
+
         # extracting the main article body
         review_body = parsed_claim_review_page.select_one(
             "div.lhs-area")
+        # making a clone
+        review_body = copy.copy(review_body)
+
         # removing the social-media sahres links
         review_body.select_one('ul.social-icons-details').decompose()
 
@@ -178,9 +189,20 @@ class VishvasnewsFactCheckingSiteExtractor:
         return links
 
     def extract_date(self, parsed_claim_review_page: BeautifulSoup) -> str:
-        date = parsed_claim_review_page.select("ul.updated li")[1]
+        date = parsed_claim_review_page.select("ul.updated li")[1].text.strip()
+
+        r = re.compile(
+            '^Updated: *([a-zA-Z]+) ([0-9]+), ([0-9]{4})$').match(date)
+
+        month = str({v: k for k, v in enumerate(
+            calendar.month_name)}[r.group(1)])
+        day = r.group(2)
+        year = r.group(3)
+
+        date = year + '-' + month + '-' + day
+
         if date:
-            return date.text.strip()
+            return date
         else:
             return ""
 
@@ -193,26 +215,22 @@ class VishvasnewsFactCheckingSiteExtractor:
         """
 
         tags_link = parsed_claim_review_page.select(
-            "ul.tags  a[rel=\"tag\"]")
-        tags = ""
+            "ul.tags a")
+        tags = []
         for tag_link in tags_link:
             if tag_link.text:
-                tag = (tag_link.text).replace("#", "")
-                tags += tag + ","
+                tags.append((tag_link.text).replace("#", ""))
 
-        return tags[:len(tags)-1]
+        return tags
         return
 
     def extract_author(self, parsed_claim_review_page: BeautifulSoup) -> str:
-
         authors = []
 
         for author in parsed_claim_review_page.find_all("li", class_="name"):
             authors.append(author.a.text)
-        if authors:
-            return authors
-        else:
-            return ""
+
+        return authors
 
     def extract_rating_value(self, parsed_claim_review_page: BeautifulSoup) -> str:
         btn = parsed_claim_review_page.select_one(
