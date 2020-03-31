@@ -203,7 +203,7 @@ class VishvasnewsFactCheckingSiteExtractor:
         btn = parsed_claim_review_page.select_one(
             "div.selected span")
         if btn:
-            return btn.text
+            return btn.text.strip()
         else:
             return ""
 
@@ -212,13 +212,13 @@ class VishvasnewsFactCheckingSiteExtractor:
         return
 
     @staticmethod
-    def translate(text):
-        """
-            : text: - -> The text in arabic
-            : return: - -> return a translation of: text: in english
-        """
+    def translate_rating_value(initial_rating_value: str) -> str:
+        return {
+            "True": "TRUE",
+            "Misleading": "MIXTURE",
+            "False": "FALSE"
 
-        return
+        }[initial_rating_value]
 
     @staticmethod
     def tagme(text):
