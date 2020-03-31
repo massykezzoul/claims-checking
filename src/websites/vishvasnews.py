@@ -133,7 +133,22 @@ class VishvasnewsFactCheckingSiteExtractor:
             return ""
 
     def extract_review(self, parsed_claim_review_page: BeautifulSoup) -> str:
+        
         return
+
+    def extract_claimed_by(self , parsed_claim_review_page: BeautifulSoup) -> str:
+        infos = []
+        
+        review = parsed_claim_review_page.find("ul", class_="claim-review")
+        for info in review.find_all("li") :
+            infos.append(info.span.text)
+
+        
+        if infos[1]:
+            return infos[1]
+        else :
+            return ""    
+
 
     def extract_links(self, parsed_claim_review_page: BeautifulSoup) -> str:
 
