@@ -129,6 +129,7 @@ class VishvasnewsFactCheckingSiteExtractor:
 
     def extract_claim(self, parsed_claim_review_page: BeautifulSoup) -> str:
         claim = parsed_claim_review_page.find("ul", class_="claim-review")
+        # check that the claim is in english
         if claim:
             return claim.li.span.text
         else:
@@ -246,6 +247,7 @@ class VishvasnewsFactCheckingSiteExtractor:
 
     def get_claim_and_print(self, file_name="", err_file_name=""):
         '''
+            Extract all claims from vishvasnews and print them to :file_name:
             :file_name: if not spicified write to stdout
             :return:    0 if sucess, -1 if error
         '''
