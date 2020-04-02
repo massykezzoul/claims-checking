@@ -244,6 +244,81 @@ class VishvasnewsFactCheckingSiteExtractor:
 
         return
 
+    def get_claim_and_print(self, file_name="", err_file_name=""):
+        '''
+            :file_name: if not spicified write to stdout
+            :return:    0 if sucess, -1 if error
+        '''
+        ERROR = -1
+        SUCESS = 0
+        LOG = True  # if true print infomation about execution if the script
+        extracted = 0  # number of claim exctracted
+        not_extracted = 0  # number of claim that the exctraction don't work
+
+        file_name = file_name.strip()  # remove extra spaces
+        if file_name != "":
+            try:
+                file = open(file_name, "w")
+            except IOError:
+                print("Could not open {}.".format(file_name))
+                return ERROR
+        else:
+            file = sys.stdout
+            LOG = False
+
+        err_file_name = err_file_name.strip()
+        if err_file_name != "":
+            try:
+                err_file = open(err_file_name, "w")
+            except IOError:
+                if LOG:
+                    print("Could not open {}.".format(err_file_name))
+                err_file = sys.stderr
+        else:
+            err_file = sys.stderr
+
+        if LOG:
+            print("Extracting from vishvasnews.com to {}".format(file_name))
+        print("claim_url,claim, title, claim_author, links, date, tags, authors, rating_value", file=file)
+
+        for retrieve_page in self.retrieve_listing_page_urls():
+            for claim_url in self.retrieve_urls(self.get(retrieve_page), retrieve_page, 0, 0):
+                if LOG:
+                    print("Extracting from : {}".format(claim_url))
+                webpage = self.get(claim_url)
+                if self.is_claim(webpage):
+                    extracted += 1
+                    claim = self.extract_claim(webpage)
+                    title = self.extract_title(webpage)
+                    claimeur = self.extract_claimed_by(webpage)
+                    links = self.extract_links(webpage)
+                    date = self.extract_date(webpage)
+                    tags = self.extract_tags(webpage)
+                    authors = self.extract_author(webpage)
+                    rating = self.extract_rating_value(webpage)
+
+                    print('"{}"'.format(claim_url), end=', ', file=file)
+                    print('"{}"'.format(claim), end=', ', file=file)
+                    print('"{}"'.format(title), end=', ', file=file)
+                    print('"{}"'.format(claimeur), end=', ', file=file)
+                    print('"{}"'.format(str(links)), end=', ', file=file)
+                    print('"{}"'.format(date), end=', ', file=file)
+                    print('"{}"'.format(str(tags)), end=', ', file=file)
+                    print('"{}"'.format(str(authors)), end=', ', file=file)
+                    print('"{}"'.format(rating), end='\n', file=file)
+                else:
+                    not_extracted += 1
+                    if LOG:
+                        print(
+                            "Can't extract, the claim from {}".format(claim_url), file=err_file)
+        if LOG:
+            print("Extraction terminated with sucess.")
+            print("{} claim links extracted.".format(extracted+not_extracted))
+            print("{} claim extracted.".format(extracted))
+            print("{} claim not extracted.".format(not_extracted))
+        file.close()
+        return SUCESS
+
     @staticmethod
     def translate_rating_value(initial_rating_value: str) -> str:
         return {

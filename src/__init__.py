@@ -8,33 +8,19 @@ import sys
 sys.path.append("websites")
 
 
-def vishvas():
+def vishvas(argv):
     #claim_url = "https://www.vishvasnews.com/english/world/fact-check-no-this-is-not-the-image-of-an-indian-soldier/"
     vishvas = v.VishvasnewsFactCheckingSiteExtractor()
 
-    print("claim, title, claim_author, links, date, tags, authors, rating_value")
+    file_name = ""
+    err_file = ""
+    if len(argv) > 1:
+        file_name = argv[1]
 
-    for retrieve_page in vishvas.retrieve_listing_page_urls():
-        for claim_page in vishvas.retrieve_urls(vishvas.get(retrieve_page), retrieve_page, 0, 0):
-            webpage = vishvas.get(claim_page)
-            if vishvas.is_claim(webpage):
-                claim = vishvas.extract_claim(webpage)
-                title = vishvas.extract_title(webpage)
-                claimeur = vishvas.extract_claimed_by(webpage)
-                links = vishvas.extract_links(webpage)
-                date = vishvas.extract_date(webpage)
-                tags = vishvas.extract_tags(webpage)
-                authors = vishvas.extract_author(webpage)
-                rating = vishvas.extract_rating_value(webpage)
+        if len(argv) > 2:
+            err_file = argv[2]
 
-                print('"' + claim + '"', end=', ')
-                print('"' + title + '"', end=', ')
-                print('"' + claimeur + '"', end=', ')
-                print('"' + str(links) + '"', end=', ')
-                print('"' + date + '"', end=', ')
-                print('"' + str(tags) + '"', end=', ')
-                print('"' + str(authors) + '"', end=', ')
-                print('"' + rating + '"', end='\n')
+    vishvas.get_claim_and_print(file_name, err_file)
 
 
 def fatabyyano():
@@ -49,4 +35,4 @@ def fatabyyano():
 
 
 if __name__ == "__main__":
-    vishvas()
+    vishvas(sys.argv)
