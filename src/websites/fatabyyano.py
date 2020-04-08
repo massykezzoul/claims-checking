@@ -74,7 +74,7 @@ class FatabyyanoFactCheckingSiteExtractor:
                 maximum = p
         return maximum
 
-    def retrieve_urls(self, parsed_claim_review_page: BeautifulSoup, listing_page_url: str, begin: int, number_of_pages: int) -> List[str]:
+    def retrieve_urls(self, parsed_claim_review_page: BeautifulSoup, listing_page_url: str, number_of_pages: int) -> List[str]:
         """
             :parsed_listing_page: --> une page (parsed) qui liste des claims
             :listing_page_url:    --> l'url associé à la page ci-dessus

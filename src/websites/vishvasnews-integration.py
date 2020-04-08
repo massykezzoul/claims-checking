@@ -9,24 +9,24 @@ from tqdm import tqdm
 
 import requests
 from bs4 import NavigableString
+from claim_extractor.extractors import caching
 
-from claim import Claim
+from claim_extractor import Claim, Configuration
+from claim_extractor.extractors import FactCheckingSiteExtractor, caching
+
+from claim_extractor import tagme
 import json
-import tagme
 import copy  # to clone beautifulSoup nodes
 import calendar  # convert month name to month number
 
 sys.path.append("../tagme")
 
 
-class VishvasnewsFactCheckingSiteExtractor:
+class VishvasnewsFactCheckingSiteExtractor(FactCheckingSiteExtractor):
     TAGME_API_KEY = 'b6fdda4a-48d6-422b-9956-2fce877d9119-843339462'
 
-    def __init__(self):
-        # Configuration Here...
-        self.claim = ""
-        self.review = ""
-        pass
+    def __init__(self, configuration: Configuration):
+        super().__init__(configuration)
 
     def get(self, url):
         """ @return the webpage """
@@ -164,7 +164,7 @@ class VishvasnewsFactCheckingSiteExtractor:
     def extract_title(self, parsed_claim_review_page: BeautifulSoup) -> str:
         title = parsed_claim_review_page.find("h1", class_="article-heading")
         if title:
-            return self.escape(title.text.strip())
+            return self.escape(title.text)
         else:
             return ""
 
@@ -172,8 +172,9 @@ class VishvasnewsFactCheckingSiteExtractor:
         review = ""
         paragraphs = parsed_claim_review_page.select("div.lhs-area > p")
 
-        for paragraph in paragraphs:
-            review += paragraph.text + " "
+        if paragraphs:
+            for paragraph in paragraphs:
+                review += paragraph.text + " "
 
         return self.escape(review)
 
@@ -229,8 +230,7 @@ class VishvasnewsFactCheckingSiteExtractor:
         year = r.group(3)
 
         date = year + '-' + month + '-' + day
-        if date:
-            return date
+        return date
 
     def extract_tags(self, parsed_claim_review_page: BeautifulSoup) -> str:
         """
@@ -329,89 +329,3 @@ class VishvasnewsFactCheckingSiteExtractor:
         str = re.sub(' {2,}', ' ', str).strip()  # remoing extra spaces
         str = '"' + str + '"'
         return str
-
-    def get_claim_and_print(self, file_name="", err_file_name=""):
-        '''
-            Extract all claims from vishvasnews and print them to :file_name:
-            :file_name: if not spicified write to stdout
-            :return:    0 if sucess, -1 if error
-        '''
-        ERROR = -1
-        SUCESS = 0
-        LOG = True  # if true print infomation about execution if the script
-        extracted = 0  # number of claim exctracted
-        not_extracted = 0  # number of claim that the exctraction don't work
-
-        file_name = file_name.strip()  # remove extra spaces
-        if file_name != "":
-            try:
-                file = open(file_name, "w")
-            except IOError:
-                print("Could not open {}.".format(file_name))
-                return ERROR
-        else:
-            file = sys.stdout
-            LOG = False
-
-        err_file_name = err_file_name.strip()
-        if err_file_name != "":
-            try:
-                err_file = open(err_file_name, "w")
-            except IOError:
-                if LOG:
-                    print("Could not open {}.".format(err_file_name))
-                err_file = sys.stderr
-        else:
-            err_file = sys.stderr
-
-        if LOG:
-            print("Extracting from vishvasnews.com to {}".format(file_name))
-        print("claim_url,claim,review,title, claim_author, links, date, tags, authors, rating_value, claim_entities, review_entities", file=file)
-
-        for retrieve_page in self.retrieve_listing_page_urls():
-            if LOG:
-                print("Retrieving from : {}".format(retrieve_page))
-            parsed_retrieve = self.get(retrieve_page)
-            for claim_url in self.retrieve_urls(parsed_retrieve, retrieve_page, self.find_page_count(parsed_retrieve)):
-                if LOG:
-                    print("Extracting from : {}".format(claim_url))
-                webpage = self.get(claim_url)
-                if self.is_claim(webpage):
-                    extracted += 1
-                    claim = self.extract_claim(webpage)
-                    review = self.extract_review(webpage)
-                    title = self.extract_title(webpage)
-                    claimeur = self.extract_claimed_by(webpage)
-                    links = self.extract_links(webpage)
-                    date = self.extract_date(webpage)
-                    tags = self.extract_tags(webpage)
-                    authors = self.extract_author(webpage)
-                    rating = self.extract_rating_value(webpage)
-                    claim_entities, review_entities = self.extract_entities(
-                        claim, review)
-
-                    print('{}'.format(claim_url), end=',', file=file)
-                    print('{}'.format(claim), end=',', file=file)
-                    print('{}'.format(review), end=',', file=file)
-                    print('{}'.format(title), end=',', file=file)
-                    print('{}'.format(claimeur), end=',', file=file)
-                    print('"{}"'.format(str(links)), end=',', file=file)
-                    print('{}'.format(date), end=',', file=file)
-                    print('"{}"'.format(str(tags)), end=',', file=file)
-                    print('"{}"'.format(str(authors)), end=',', file=file)
-                    print('{}'.format(rating), end=',', file=file)
-                    print('{}'.format(str(claim_entities)), end=',', file=file)
-                    print('{}'.format(str(review_entities)), end='\n', file=file)
-
-                else:
-                    not_extracted += 1
-                    if LOG:
-                        print(
-                            "Can't extract, the claim from {}".format(claim_url), file=err_file)
-        if LOG:
-            print("Extraction terminated with sucess.")
-            print("{} claim links extracted.".format(extracted+not_extracted))
-            print("{} claim extracted.".format(extracted))
-            print("{} claim not extracted.".format(not_extracted))
-        file.close()
-        return SUCESS
