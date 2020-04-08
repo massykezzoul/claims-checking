@@ -109,11 +109,14 @@ class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
         claim.set_url(url)
         claim.set_tags(self.extract_tags(parsed_claim_review_page))
         # extract_entities returns two variables
-        json_claim, json_body = self.extract_entities()
+        json_claim, json_body = self.extract_entities(self.claim, self.review)
         claim.set_claim_entities(json_claim)
         claim.set_body_entities(json_body)
 
         return [claim]
+
+    def is_claim(self, parsed_claim_review_page: BeautifulSoup) -> bool:
+        return True
 
     def extract_claim(self, parsed_claim_review_page: BeautifulSoup) -> str:
         claim = parsed_claim_review_page.select_one("h1.post_title")
@@ -172,13 +175,13 @@ class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
             # print("Something wrong in extracting rating value !")
             return ""
 
-    def extract_entities(self):
+    def extract_entities(self, claim, review):
         """
             You should call extract_claim and extract_review method and 
             store the result in self.claim and self.review before calling this method
             :return: --> entities in the claim and the review in to different variable
         """
-        return self.get_json_format(self.tagme(self.translate(self.claim))), self.get_json_format(self.tagme(self.translate(self.review)))
+        return self.escape(self.get_json_format(self.tagme(self.translate(claim)))), self.escape(self.get_json_format(self.tagme(self.translate(review))))
 
     @staticmethod
     def translate_rating_value(initial_rating_value: str) -> str:
@@ -199,6 +202,8 @@ class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
             :text:  --> The text in arabic
             :return:  --> return a translation of :text: in english
         """
+        if text == "":
+            return ""
         self = FatabyyanoFactCheckingSiteExtractor
         yandexAPI = self.YANDEX_API_KEY
         yandex = YandexTranslate(yandexAPI)
@@ -209,7 +214,7 @@ class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
             responses = [response]
             text_too_long = False
         except YandexTranslateException as e:
-            if e.args == 'ERR_TEXT_TOO_LONG':
+            if e.args == 'ERR_TEXT_TOO_LONG' or 'ERR_TEXT_TOO_LONG' in e.args:
                 text_too_long = True
             else:
                 print("Erreur API Yandex\nCode d'erreur : " + str(e.args))
@@ -249,6 +254,8 @@ class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
             :text:  --> The text in english after translation
             :return:  --> return a list of entities
         """
+        if text == "":
+            return []
         tagme.GCUBE_TOKEN = FatabyyanoFactCheckingSiteExtractor.TAGME_API_KEY
         return tagme.annotate(text)
 
@@ -271,7 +278,7 @@ class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
             entity["text"] = annotation.mention
             entity["score"] = annotation.score
             entity["categories"] = []
-            if tagme_entity.original_json["annotations"][i]["rho"] > min_rho:
+            if tagme_entity.original_json["annotations"][i]["rho"] > min_rho and "dbpedia_categories" in tagme_entity.original_json["annotations"][i]:
                 for categorie in tagme_entity.original_json["annotations"][i]["dbpedia_categories"]:
                     entity["categories"].append(categorie)
             i = i + 1
@@ -311,6 +318,5 @@ class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
     @staticmethod
     def escape(str):
         # define this fucntion as a method of the class Fatabyyano...
-        str = str.replace("ﷺ", "صَلَّىٰ ٱللَّٰهُ عَلَيْهِ وَسَلَّمَ").replace(
-            "\n", " ").replace('"', "'").replace('\\n', '\n')
-        return str
+        return '"' + str.replace("ﷺ", "صَلَّىٰ ٱللَّٰهُ عَلَيْهِ وَسَلَّمَ").replace(
+            "\n", " ").replace('"', '""').replace('\\n', ' ') + '"'  # la derniere la je vois pas son utilité

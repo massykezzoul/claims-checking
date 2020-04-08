@@ -12,13 +12,15 @@ from bs4 import NavigableString
 
 from claim import Claim
 import json
-
-# new
+import tagme
 import copy  # to clone beautifulSoup nodes
-import calendar
+import calendar  # convert month name to month number
+
+sys.path.append("../tagme")
 
 
 class VishvasnewsFactCheckingSiteExtractor:
+    TAGME_API_KEY = 'b6fdda4a-48d6-422b-9956-2fce877d9119-843339462'
 
     def __init__(self):
         # Configuration Here...
@@ -131,20 +133,25 @@ class VishvasnewsFactCheckingSiteExtractor:
         claim = parsed_claim_review_page.find("ul", class_="claim-review")
         # check that the claim is in english
         if claim:
-            return claim.li.span.text
+            return self.escape(claim.li.span.text)
         else:
             return ""
 
     def extract_title(self, parsed_claim_review_page: BeautifulSoup) -> str:
         title = parsed_claim_review_page.find("h1", class_="article-heading")
         if title:
-            return title.text.strip()
+            return self.escape(title.text.strip())
         else:
             return ""
 
     def extract_review(self, parsed_claim_review_page: BeautifulSoup) -> str:
+        review = ""
+        paragraphs = parsed_claim_review_page.select("div.lhs-area > p")
 
-        return
+        for paragraph in paragraphs:
+            review += paragraph.text + " "
+
+        return self.escape(review)
 
     def extract_claimed_by(self, parsed_claim_review_page: BeautifulSoup) -> str:
         infos = []
@@ -154,12 +161,11 @@ class VishvasnewsFactCheckingSiteExtractor:
             infos.append(info.span.text)
 
         if infos[1]:
-            return infos[1]
+            return self.escape(infos[1])
         else:
             return ""
 
-    def extract_links(self, parsed_claim_review_page: BeautifulSoup) -> str:
-
+    def extract_links(self, parsed_claim_review_page: BeautifulSoup) -> list:
         links = []
 
         # extracting the main article body
@@ -209,7 +215,7 @@ class VishvasnewsFactCheckingSiteExtractor:
 
         return
 
-    def extract_tags(self, parsed_claim_review_page: BeautifulSoup) -> str:
+    def extract_tags(self, parsed_claim_review_page: BeautifulSoup) -> list:
         """
             : parsed_claim_review_page: - -> the parsed web page of the claim
             : return: - -> return a list of tags that are related to the claim
@@ -225,7 +231,7 @@ class VishvasnewsFactCheckingSiteExtractor:
         return tags
         return
 
-    def extract_author(self, parsed_claim_review_page: BeautifulSoup) -> str:
+    def extract_author(self, parsed_claim_review_page: BeautifulSoup) -> list:
         authors = []
 
         for author in parsed_claim_review_page.find_all("li", class_="name"):
@@ -241,9 +247,63 @@ class VishvasnewsFactCheckingSiteExtractor:
         else:
             return ""
 
-    def extract_entities(self):
+    def extract_entities(self, claim: str, review: str):
+        """
+            You should call extract_claim and extract_review method and
+            store the result in self.claim and self.review before calling this method
+            :return: --> entities in the claim and the review in to different variable
+        """
+        return self.escape(self.get_json_format(self.tagme(claim))), self.escape(self.get_json_format(self.tagme(review)))
 
-        return
+    @staticmethod
+    def translate_rating_value(initial_rating_value: str) -> str:
+        return {
+            "True": "TRUE",
+            "Misleading": "MIXTURE",
+            "False": "FALSE"
+        }[initial_rating_value]
+
+    @staticmethod
+    def tagme(text) -> list:
+        """
+            :text:  --> The text in english after translation
+            :return:  --> return a list of entities
+        """
+        if text == "":
+            return []
+        tagme.GCUBE_TOKEN = VishvasnewsFactCheckingSiteExtractor.TAGME_API_KEY
+        return tagme.annotate(text)
+
+    # write this method (and tagme, translate) in an another file cause we can use it in other websites
+    @staticmethod
+    def get_json_format(tagme_entity):
+        '''
+            :tagme_entity: must be an object of AnnotateResponse Class returned by tagme function
+        '''
+        data_set = []
+        i = 0
+        min_rho = 0.1
+
+        for annotation in tagme_entity.get_annotations(min_rho):
+            entity = {}
+            entity["id"] = annotation.entity_id
+            entity["begin"] = annotation.begin
+            entity["end"] = annotation.end
+            entity["entity"] = annotation.entity_title
+            entity["text"] = annotation.mention
+            entity["score"] = annotation.score
+            entity["categories"] = []
+            if tagme_entity.original_json["annotations"][i]["rho"] > min_rho and "dbpedia_categories" in tagme_entity.original_json["annotations"][i]:
+                for categorie in tagme_entity.original_json["annotations"][i]["dbpedia_categories"]:
+                    entity["categories"].append(categorie)
+            i = i + 1
+            data_set.append(entity)
+
+        return json.dumps(data_set)
+
+    @staticmethod
+    def escape(str):
+        return '"' + str.replace("\n", " ").replace('"', '""') + '"'
 
     def get_claim_and_print(self, file_name="", err_file_name=""):
         '''
@@ -281,16 +341,20 @@ class VishvasnewsFactCheckingSiteExtractor:
 
         if LOG:
             print("Extracting from vishvasnews.com to {}".format(file_name))
-        print("claim_url,claim, title, claim_author, links, date, tags, authors, rating_value", file=file)
+        print("claim_url,claim,review,title, claim_author, links, date, tags, authors, rating_value, claim_entities, review_entities", file=file)
 
         for retrieve_page in self.retrieve_listing_page_urls():
-            for claim_url in self.retrieve_urls(self.get(retrieve_page), retrieve_page, 0, 0):
+            if LOG:
+                print("Retrieving from : {}".format(retrieve_page))
+            parsed_retrieve = self.get(retrieve_page)
+            for claim_url in self.retrieve_urls(parsed_retrieve, retrieve_page, 0, self.find_page_count(parsed_retrieve)):
                 if LOG:
                     print("Extracting from : {}".format(claim_url))
                 webpage = self.get(claim_url)
                 if self.is_claim(webpage):
                     extracted += 1
                     claim = self.extract_claim(webpage)
+                    review = self.extract_review(webpage)
                     title = self.extract_title(webpage)
                     claimeur = self.extract_claimed_by(webpage)
                     links = self.extract_links(webpage)
@@ -298,16 +362,22 @@ class VishvasnewsFactCheckingSiteExtractor:
                     tags = self.extract_tags(webpage)
                     authors = self.extract_author(webpage)
                     rating = self.extract_rating_value(webpage)
+                    claim_entities, review_entities = self.extract_entities(
+                        claim, review)
 
-                    print('"{}"'.format(claim_url), end=', ', file=file)
-                    print('"{}"'.format(claim), end=', ', file=file)
-                    print('"{}"'.format(title), end=', ', file=file)
-                    print('"{}"'.format(claimeur), end=', ', file=file)
-                    print('"{}"'.format(str(links)), end=', ', file=file)
-                    print('"{}"'.format(date), end=', ', file=file)
-                    print('"{}"'.format(str(tags)), end=', ', file=file)
-                    print('"{}"'.format(str(authors)), end=', ', file=file)
-                    print('"{}"'.format(rating), end='\n', file=file)
+                    print('{}'.format(claim_url), end=',', file=file)
+                    print('{}'.format(claim), end=',', file=file)
+                    print('{}'.format(review), end=',', file=file)
+                    print('{}'.format(title), end=',', file=file)
+                    print('{}'.format(claimeur), end=',', file=file)
+                    print('"{}"'.format(str(links)), end=',', file=file)
+                    print('{}'.format(date), end=',', file=file)
+                    print('"{}"'.format(str(tags)), end=',', file=file)
+                    print('"{}"'.format(str(authors)), end=',', file=file)
+                    print('{}'.format(rating), end=',', file=file)
+                    print('{}'.format(str(claim_entities)), end=',', file=file)
+                    print('{}'.format(str(review_entities)), end='\n', file=file)
+
                 else:
                     not_extracted += 1
                     if LOG:
@@ -320,26 +390,3 @@ class VishvasnewsFactCheckingSiteExtractor:
             print("{} claim not extracted.".format(not_extracted))
         file.close()
         return SUCESS
-
-    @staticmethod
-    def translate_rating_value(initial_rating_value: str) -> str:
-        return {
-            "True": "TRUE",
-            "Misleading": "MIXTURE",
-            "False": "FALSE"
-
-        }[initial_rating_value]
-
-    @staticmethod
-    def tagme(text):
-        """
-            : text: - -> The text in english after translation
-            : return: - -> return a list of entities
-        """
-        return
-
-    # write this method (and tagme, translate) in an another file cause we can use it in other websites
-    @staticmethod
-    def get_json_format(tagme_entity):
-
-        return

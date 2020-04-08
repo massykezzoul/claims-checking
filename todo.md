@@ -2,12 +2,10 @@
 
 ## Things to do :
 
-- [ ] Trouver une solution pour les text trop longtemps pour l'API Yandex
 - [ ] Verifier le CSV final
-- [ ] Vishvas: Extraire la review
+- [ ] Vishvas: Extraire la review (Régles le '\n' aprés la conculsion qui ne veut pas partir)
 - [ ] Vishvas: il y'a une minorité de page ou la claim n'est pas en anglais -> trouver une solution
 - [ ] Vishvas: 22 claims où la rating value n'apparait pas -> trouver une solution si possible
-- [ ] Vishvas: extraire les entités
 - [ ] Vishvas: Finaliser (méthode : extract_claim_and_review())
 - [ ] Vishvas: Integration à claimsKG
 
@@ -31,3 +29,5 @@
 - [x] Géneration d'un fichier CSV final
 - [x] Asynchronous Requests ?
 - [x] Commencer le site [VishVas](https://vishvas.news "Vishvas")
+- [x] Trouver une solution pour les text trop longtemps pour l'API Yandex
+- [x] Vishvas: extraire les entités

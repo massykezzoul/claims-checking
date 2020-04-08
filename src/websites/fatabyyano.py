@@ -113,11 +113,14 @@ class FatabyyanoFactCheckingSiteExtractor:
         claim.set_url(url)
         claim.set_tags(self.extract_tags(parsed_claim_review_page))
         # extract_entities returns two variables
-        json_claim, json_body = self.extract_entities()
+        json_claim, json_body = self.extract_entities(self.claim, self.review)
         claim.set_claim_entities(json_claim)
         claim.set_body_entities(json_body)
 
         return [claim]
+
+    def is_claim(self, parsed_claim_review_page: BeautifulSoup) -> bool:
+        return True
 
     def extract_claim(self, parsed_claim_review_page: BeautifulSoup) -> str:
         claim = parsed_claim_review_page.select_one("h1.post_title")
@@ -176,13 +179,13 @@ class FatabyyanoFactCheckingSiteExtractor:
             # print("Something wrong in extracting rating value !")
             return ""
 
-    def extract_entities(self):
+    def extract_entities(self, claim, review):
         """
             You should call extract_claim and extract_review method and
             store the result in self.claim and self.review before calling this method
             :return: --> entities in the claim and the review in to different variable
         """
-        return self.get_json_format(self.tagme(self.translate(self.claim))), self.get_json_format(self.tagme(self.translate(self.review)))
+        return self.escape(self.get_json_format(self.tagme(self.translate(claim)))), self.escape(self.get_json_format(self.tagme(self.translate(review))))
 
     @staticmethod
     def translate_rating_value(initial_rating_value: str) -> str:
@@ -203,6 +206,10 @@ class FatabyyanoFactCheckingSiteExtractor:
             :text:  --> The text in arabic
             :return:  --> return a translation of :text: in english
         """
+        DEBUG = False
+
+        if text == "":
+            return ""
         self = FatabyyanoFactCheckingSiteExtractor
         yandexAPI = self.YANDEX_API_KEY
         yandex = YandexTranslate(yandexAPI)
@@ -210,18 +217,23 @@ class FatabyyanoFactCheckingSiteExtractor:
         responses = []
         try:
             response = yandex.translate(text, 'ar-en')
+            if DEBUG:
+                print("response : " + response, end='\n\n')
             responses = [response]
             text_too_long = False
         except YandexTranslateException as e:
-            if e.args == 'ERR_TEXT_TOO_LONG':
+            if e.args == 'ERR_TEXT_TOO_LONG' or 'ERR_TEXT_TOO_LONG' in e.args:
                 text_too_long = True
             else:
+                print(text, end='\n\n')
                 print("Erreur API Yandex\nCode d'erreur : " + str(e.args))
                 sys.exit(1)
 
         text_list = [text]
 
         while text_too_long:
+            if DEBUG:
+                print("cutting : " + str(text_list), end='\n\n')
             text_too_long = False
             try:
                 text_list = self.cut_str(text_list)
@@ -253,6 +265,8 @@ class FatabyyanoFactCheckingSiteExtractor:
             :text:  --> The text in english after translation
             :return:  --> return a list of entities
         """
+        if text == "":
+            return []
         tagme.GCUBE_TOKEN = FatabyyanoFactCheckingSiteExtractor.TAGME_API_KEY
         return tagme.annotate(text)
 
@@ -275,7 +289,7 @@ class FatabyyanoFactCheckingSiteExtractor:
             entity["text"] = annotation.mention
             entity["score"] = annotation.score
             entity["categories"] = []
-            if tagme_entity.original_json["annotations"][i]["rho"] > min_rho:
+            if tagme_entity.original_json["annotations"][i]["rho"] > min_rho and "dbpedia_categories" in tagme_entity.original_json["annotations"][i]:
                 for categorie in tagme_entity.original_json["annotations"][i]["dbpedia_categories"]:
                     entity["categories"].append(categorie)
             i = i + 1
@@ -314,7 +328,91 @@ class FatabyyanoFactCheckingSiteExtractor:
 
     @staticmethod
     def escape(str):
-        # define this fucntion as a method of the class Fatabyyano...
-        str = str.replace("ﷺ", "صَلَّىٰ ٱللَّٰهُ عَلَيْهِ وَسَلَّمَ").replace(
-            "\n", " ").replace('"', "'").replace('\\n', '\n')
-        return str
+        return '"' + str.replace("ﷺ", "صَلَّىٰ ٱللَّٰهُ عَلَيْهِ وَسَلَّمَ").replace(
+            "\n", " ").replace('"', '""').replace('\\n', ' ') + '"'
+
+    def get_claim_and_print(self, file_name="", err_file_name=""):
+        '''
+            Extract all claims from vishvasnews and print them to :file_name:
+            :file_name: if not spicified write to stdout
+            :return:    0 if sucess, -1 if error
+        '''
+        ERROR = -1
+        SUCESS = 0
+        LOG = True  # if true print infomation about execution if the script
+        extracted = 0  # number of claim exctracted
+        not_extracted = 0  # number of claim that the exctraction don't work
+
+        file_name = file_name.strip()  # remove extra spaces
+        if file_name != "":
+            try:
+                file = open(file_name, "w")
+            except IOError:
+                print("Could not open {}.".format(file_name))
+                return ERROR
+        else:
+            file = sys.stdout
+            LOG = False
+
+        err_file_name = err_file_name.strip()
+        if err_file_name != "":
+            try:
+                err_file = open(err_file_name, "w")
+            except IOError:
+                if LOG:
+                    print("Could not open {}.".format(err_file_name))
+                err_file = sys.stderr
+        else:
+            err_file = sys.stderr
+
+        if LOG:
+            print("Extracting from fatabyyano.com to {}".format(file_name))
+        print("claim_url,claim, title, claim_author, links, date, tags, authors, rating_value, claim_entities, review_entites", file=file)
+
+        for retrieve_page in self.retrieve_listing_page_urls():
+            if LOG:
+                print("Retrieving from : {}".format(retrieve_page))
+            parsed_retrieve = self.get(retrieve_page)
+            for claim_url in self.retrieve_urls(parsed_retrieve, retrieve_page, 0, self.find_page_count(parsed_retrieve)):
+                if LOG:
+                    print("Extracting from : {}".format(claim_url))
+                webpage = self.get(claim_url)
+                if self.is_claim(webpage):
+                    extracted += 1
+                    claim = self.extract_claim(webpage)
+                    review = self.extract_review(webpage)
+                    title = claim  # self.extract_title(webpage)
+                    claimeur = ""  # self.extract_claimed_by(webpage)
+                    links = self.extract_links(webpage)
+                    date = self.extract_date(webpage)
+                    tags = self.extract_tags(webpage)
+                    authors = self.extract_author(webpage)
+                    rating = self.extract_rating_value(webpage)
+                    claim_entities, review_entities = self.extract_entities(
+                        claim, review)
+
+                    print('"{}"'.format(claim_url), end=',', file=file)
+                    print('{}'.format(claim), end=',', file=file)
+                    print('{}'.format(title), end=',', file=file)
+                    print('"{}"'.format(claimeur), end=',', file=file)
+                    print('"{}"'.format(str(links)), end=',', file=file)
+                    print('{}'.format(date), end=',', file=file)
+                    print('"{}"'.format(str(tags)), end=',', file=file)
+                    print('{}'.format(str(authors)), end=',', file=file)
+                    print('{}'.format(rating), end=',', file=file)
+                    print('{}'.format(str(claim_entities)),
+                          end=',', file=file)
+                    print('{}'.format(str(review_entities)),
+                          end='\n', file=file)
+                else:
+                    not_extracted += 1
+                    if LOG:
+                        print(
+                            "Can't extract, the claim from {}".format(claim_url), file=err_file)
+        if LOG:
+            print("Extraction terminated with sucess.")
+            print("{} claim links extracted.".format(extracted+not_extracted))
+            print("{} claim extracted.".format(extracted))
+            print("{} claim not extracted.".format(not_extracted))
+        file.close()
+        return SUCESS
