@@ -317,6 +317,8 @@ class FatabyyanoFactCheckingSiteExtractor(FactCheckingSiteExtractor):
 
     @staticmethod
     def escape(str):
-        # define this fucntion as a method of the class Fatabyyano...
-        return '"' + str.replace("ﷺ", "صَلَّىٰ ٱللَّٰهُ عَلَيْهِ وَسَلَّمَ").replace(
-            "\n", " ").replace('"', '""').replace('\\n', ' ') + '"'  # la derniere la je vois pas son utilité
+        str = re.sub('[\n\t\r]', ' ', str)  # removing special char
+        str = str.replace('"', '""')  # escaping '"' (CSV format)
+        str = re.sub(' {2,}', ' ', str).strip()  # remoing extra spaces
+        str = '"' + str + '"'
+        return str

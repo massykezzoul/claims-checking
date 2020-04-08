@@ -44,4 +44,10 @@ def fatabyyano(argv):
 
 
 if __name__ == "__main__":
-    vishvas(sys.argv)
+    # vishvas(sys.argv)
+    vishvas = v.VishvasnewsFactCheckingSiteExtractor()
+
+    review = vishvas.extract_review(vishvas.get(
+        "https://www.vishvasnews.com/english/politics/fact-check-this-is-an-old-video-from-rajasthan-has-no-connection-with-assam-nrc/"))
+
+    print(review)

@@ -328,8 +328,11 @@ class FatabyyanoFactCheckingSiteExtractor:
 
     @staticmethod
     def escape(str):
-        return '"' + str.replace("ﷺ", "صَلَّىٰ ٱللَّٰهُ عَلَيْهِ وَسَلَّمَ").replace(
-            "\n", " ").replace('"', '""').replace('\\n', ' ') + '"'
+        str = re.sub('[\n\t\r]', ' ', str)  # removing special char
+        str = str.replace('"', '""')  # escaping '"' (CSV format)
+        str = re.sub(' {2,}', ' ', str).strip()  # remoing extra spaces
+        str = '"' + str + '"'
+        return str
 
     def get_claim_and_print(self, file_name="", err_file_name=""):
         '''
