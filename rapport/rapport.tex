@@ -12,6 +12,9 @@
 \usepackage{listings}
 \usepackage{color}
 
+% arabe
+\usepackage{arabtex}
+
 \definecolor{mygreen}{rgb}{0,0.6,0}
 \definecolor{mygray}{rgb}{0.5,0.5,0.5}
 \definecolor{mymauve}{rgb}{0.58,0,0.82}
@@ -54,13 +57,13 @@
 \addto\captionsfrench{\def\figurename{Schéma}}
 
 % Informations le titre, le(s) auteur(s), la date
-\title{Moteur de Requêtes SQL Simples}
+\title{Claims checking}
 \author{
     Belkassim BOUZIDI \and
     Chakib ELHOUITI \and
     Massili KEZZOUL \and
-    Ramzi ZEROUAL \and
-    Fei YANG
+    Abdelkader Nedjari \and
+    Ramzi ZEROUAL
 }
 \date{\today}
 
@@ -72,24 +75,36 @@
 	{\scshape\LARGE Universite de Montpellier\par}
 	{\scshape\Large Rapport de projet\par}
 	\vspace{1.5cm}
-	{\huge\bfseries Moteur de requêtes SQL simples\par}
+	{\huge\bfseries Claims checking\par}
 	\vspace{2cm}
 	{\Large\itshape
 		Belkassim BOUZIDI \\
 		Chakib ELHOUITI \\
 		Massili KEZZOUL \\
+		Abdelkader Nedjari \\
 		Ramzi ZEROUAL \\
-		Fei YANG \\
 		\par}
 
 	\vspace{1.5cm}
 
 	{\Large\itshape
 		Encadrante :\par
-		M\up{me} Anne-Muriel \textsc{Chifolleau}
+		M\up{r} Konstantin \textsc{Todorov}
 		\par}
 
 	\vspace{2cm}
+
+	\begin{figure}[h]
+		\begin{minipage}[c]{.46\linewidth}
+			\centering
+			\includegraphics[width=1\textwidth]{img/univ-montpellier.png}
+		\end{minipage}
+		\hfill%
+		\begin{minipage}[c]{.46\linewidth}
+			\centering
+			\includegraphics[width=1\textwidth]{img/fds.png}
+		\end{minipage}
+	\end{figure}
 
 	\par\vspace{1cm}
 
@@ -107,26 +122,13 @@
 % ------------------------------------- %
 
 \parskip=5pt
-\chapter*{Introduction}
-
-Dans le cadre du cursus de la Licence 2 informatique, durant notre second semestre, il nous a été proposé un projet qui devra mettre en pratique nos connaissances et nos compétences au travers d'un cahier des charges. L’objet de cette démarche sera d’envisager la conception et le développement d'un moteur d'évaluation de requêtes SQL en mémoire vive.
-
-Les requêtes considérées seront des requêtes simples de la forme : \enquote{SELECT ... FROM ... WHERE ... }  sans imbrication.
-
-À partir d’un ou plusieurs fichiers CSV, Comma-separated Values\footnote{Comma-separated values, format texte ouvert représentant des données tabulaires sous forme de valeurs séparées par des virgules. Voir page },
-il est demandé de construire une représentation en mémoire des données et d'implémenter les procédures de projection, de sélection et de jointure, découlant de l'interrogation SQL.
-
-Il s'agit principalement de reproduire les fonctionnalités de bases d'un SGBD\footnote{Système de Gestion de Base de Données, voir page }, tel que MySQL ou bien Oracle Database.
-
-Notre groupe, composé de cinq personnes : Belkassim Bouzidi, Chakib Elhouiti, Massili Kezzoul, Ramzi Zeroual et Yang Feï, et encadré par M\up{me} Anne-Muriel Chifolleau, a saisie l'opportunité de réaliser ce projet.
-
 \chapter*{Remerciements}
 \vspace{\stretch{1}}
 \begin{center}
 
 	Tout d'abord nous souhaitons adresser nos remerciements au corps professoral et administratif de la faculté des sciences de Montpellier qui déploient des efforts pour assurer à leurs étudiants une formation actualisée.
 
-	En second lieu, nous tenons à remercier notre encadrante M\up{me} Anne-Muriel Chifolleau pour ses précieux conseils et son aide durant toute la période du travail.
+	En second lieu, nous tenons à remercier notre encadrante M\up{me}  pour ses précieux conseils et son aide durant toute la période du travail.
 
 	Nos vifs remerciements vont également aux membres du jury pour l’intérêt qu’ils ont porté à notre projet en acceptant d’examiner notre travail.
 
@@ -151,7 +153,7 @@ Afin de mener à bien le développement du projet, nous avons décidé de travai
 
 Ainsi, selon l'état de progression de la conception du moteur de requêtes, nous réalisâmes les tâches en retard durant le week-end pour ne pas cumuler de retard et respecter l'intégralité du cahier des charges.
 
-Toutes les semaines, nous nous sommes réunis avec notre encadrante, M\up{me} Anne-Muriel Chifolleau. Lors de ces réunions, des mises au point relatives au projet, nous furent prodiguées, cela nous a permis de bénéficier de précieux conseils.
+Toutes les semaines, nous nous sommes réunis avec notre encadrant , M\up{r} Konstantin \textsc{Todorov} Lors de ces réunions , des mises au point relatives au projet, nous furent prodiguées, cela nous a permis de bénéficier de précieux conseils.
 
 \section{Decoupage du projet}
 
@@ -167,7 +169,7 @@ Durant cette phase, nous avons commencé à implémenter les différentes foncti
 
 \subsection{Finalisation du projet}
 
-Cette étape a consisté en la réalisation des tests finaux afin de s'assurer que le moteur de requêtes fonctionne en toute circonstance et éventuellement corriger les bogues qui peuvent apparaitre.
+Cette étape a consisté en la réalisation des tests finaux afin de s'assurer que les défferents scripts fonctionnent en toute circonstance et éventuellement corriger les bogues qui peuvent apparaitre.
 
 \section{Outils de collaboration}
 
@@ -178,35 +180,59 @@ En ce qui concerne la rédaction de ce rapport, nous avons utilisé \LaTeX, syst
 \begin{figure}[h]
 	\begin{minipage}[c]{.46\linewidth}
 		\centering
-		%	\includegraphics[width=1\textwidth]{img/gitlab.png}
+		\includegraphics[width=1\textwidth]{img/gitlab.png}
 		\caption{Logo du GitLab}
 	\end{minipage}
 	\hfill%
 	\begin{minipage}[c]{.46\linewidth}
 		\centering
-		%	\includegraphics[width=1\textwidth]{img/latex.png}
+		\includegraphics[width=1\textwidth]{img/latex.png}
 		\caption{Logo de Latex}
 	\end{minipage}
 \end{figure}
 
 
-% ------------------------------------- %
-% Le langage SQL
-% ------------------------------------- %
 
 \chapter{Introduction au sujet}
 
-\section{Presentation du problème}
+\section{Fact-checking}
 
-\subsection{Interet à resoudre le problèmes}
+\subsection{Présentation du principe de fact-checking}
 
-\subsection{Présenter l'approches choisie pour résoudre le problème}
+Le fact-checking ou le vérification des faits, est une technique consistant d'une part à vérifier la véracité des faits et l'exactitude des chiffres présentés dans les médias et les différents réseaux sociaux et les blogues etc... .
+Cette notion est apparue aux États-Unis dans les années 1990. Mise en pratique par des journalistes d'investigation dans le cadre de leur profession, la méthode s'est démocratisée grâce à des logiciels aidant les particuliers à vérifier les faits.
 
-\subsection{Cachier des charges détaillé}
+L'entrée officielle du fact-checking en France date de 1995, quand est créée l'association Acrimed, qui se présente comme « l'observatoire des médias ».
+
+En vue de la prolifération très rapide des informations, il devient de plus en plus important de s'assurer de la véracité des informations qui se trouvent partout sur Internet et autres médias, tant du point de vue de la société que de celui de la recherche. De nombreuses approches récentes dans diverses communautés scientifiques portent sur des problèmes tels que la vérification des faits, la détection de la pertinence ou de point de vue des documents par rapport à des revendications particulières.
+
+\subsection{Présentation de ClaimsKG}
+
+% [1] tsema faut mettre des liens
+
+Le LIRMM[1] en collaboration avec 2 équipes allemandes (L3S Hannover et l’institut de sciences sociologiques GESIS à Cologne), a construit et mise à disposition la base de connaissance ClaimsKG[1] qui recueillit les informations et méta-données provenant d’un grand nombre de sites journalistiques internationaux de fact checking, tels que Politifact[1] ou Snopes[1]. ClaimsKG est un graphe de connaissances d’assertions annotées et liées qui facilite la création de requêtes structurées sur les assertions, leurs valeurs de vérité (True, Mostly False, etc...), leurs auteurs, date de publication, etc. ClaimsKG est généré par un pipeline entièrement automatisé qui collecte des assertions et des métadonnées à partir des sites de fact-checking, transforme les données en graphes de connaissances selon un modèle établis, et annote les assertions avec des entités DBpedia (Wikipedia). La base actuelle comprend plus de 32,000 assertions publiées depuis 1996 et est mis à jour régulièrement.
+
+\subsection{Travail à réaliser}
+
+Le sujet du TER consiste en l’enrichissement de cette base de connaissances avec des nouvelles données provenant des sites web suivants :
+
+\begin{itemize}
+	%"فتبينوا" arabe non pris en charge ?????
+	\item[Fatabyyano[1]] Jordani, en Arabe, Fatabyyano (veut dire "Alors montrez-le" en arabe) est la première et la seule plateforme arabe certifiée par l'IFCN [1];
+	\item[Vishvas.news[1]] Un site Internet de vérification des faits multilingue (en hindi, anglais ...) qui s'engage à combattre la désinformation et les informations erronées.
+\end{itemize}
+
+Le but du TER sera d’identifier les assertions individuelles dans chaque histoire, ainsi que leur label de véracité et par la suite identifier les relations entre les assertions dans chaque histoire, ainsi que les relations entre ces histoires. Les données produites par ce projet seront intégrées à la base de connaissance ClaimsKG.
+
+La principale difficulté qu'on s'attend à rencontrer est la gestion des différentes langues proposée par ces sites web. Notamment dans l'identification des différentes relations entre les assertions. En effet afin de reconnaitre les différents mots-clés du sujet traité par les articles, on utilise habituellement TAGME. un puissant outil de reconnaissance d'entités nommées dans un texte. Les langues utilisées par ces sites web ne sont pas prises en charge par TAGME. Il s'agit donc de trouver une alternative afin de reconnaitre ses différentes assertions. Ce problème ainsi que sa résolution sera détaillé plus tard dans ce rapport.
 
 \section{Technologies utilisées}
 
-Quesqu'on a utilisé comme techno (python, Traduction et autres librairies)
+Nous avons implémenter l'application en Python[1]. Choix qui s'impose de lui même car couplé à la bibliothèque BeautifulSoup[1] il devient très facile de faire du web Scraping[1].
+
+En ce qui concerne la traduction nous avons choisi d'utiliser Yandex Translator[1]. En effet en vu de la taille des données à traduire nous avons pas pu utiliser l'api de traduction de Google puisque cette dernière devient payante à partir d'un certain nombre de caractères.
+
+En fin, la reconnaissance des différents entitées concerné est faite grace à l'outil TAGME[1] a travers son API python[1].
 
 \chapter{conception Modélisation implementation}
 
