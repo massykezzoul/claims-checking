@@ -3,3 +3,10 @@
 src/websites/__pycache__/
 src/websites/__pycache__/**
 **.pyc
+
+# rapport.tex
+rapport/rapport.aux
+rapport/rapport.fdb_latexmk
+rapport/rapport.fls
+rapport/rapport.log
+rapport/rapport.toc

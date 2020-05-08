@@ -1,0 +1,205 @@
+\documentclass[oneside,13pt,a4paper]{report}
+
+% Chargement d'extensions
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{graphicx}
+\usepackage[top=3cm, bottom=3cm, left=3cm, right=3cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Bout de code
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}; should come as last argument
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  firstnumber=0,                   % start line enumeration with line 1000
+  frame=single,	                   % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=C++,                    % the language of the code
+  morekeywords={*,...},            % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  tabsize=2,	                   % sets default tabsize to 2 spaces
+}
+
+% Commande pour notation 'NB :' (nota bene)
+\newcommand\nb[1][0.3]{N\kern-#1emB : }
+
+% csquotes va utiliser la langue définie dans babel
+\usepackage[babel=true]{csquotes}
+
+% pour afficher Schéma au lieu de figure dans les legende des images
+\addto\captionsfrench{\def\figurename{Schéma}}
+
+% Informations le titre, le(s) auteur(s), la date
+\title{Moteur de Requêtes SQL Simples}
+\author{
+    Belkassim BOUZIDI \and
+    Chakib ELHOUITI \and
+    Massili KEZZOUL \and
+    Ramzi ZEROUAL \and
+    Fei YANG
+}
+\date{\today}
+
+
+\begin{document}
+%\maketitle
+\begin{titlepage}
+	\centering
+	{\scshape\LARGE Universite de Montpellier\par}
+	{\scshape\Large Rapport de projet\par}
+	\vspace{1.5cm}
+	{\huge\bfseries Moteur de requêtes SQL simples\par}
+	\vspace{2cm}
+	{\Large\itshape
+		Belkassim BOUZIDI \\
+		Chakib ELHOUITI \\
+		Massili KEZZOUL \\
+		Ramzi ZEROUAL \\
+		Fei YANG \\
+		\par}
+
+	\vspace{1.5cm}
+
+	{\Large\itshape
+		Encadrante :\par
+		M\up{me} Anne-Muriel \textsc{Chifolleau}
+		\par}
+
+	\vspace{2cm}
+
+	\par\vspace{1cm}
+
+	\vfill
+
+	% Bottom of the page
+	{\large \today\par}
+\end{titlepage}
+
+
+
+
+% ------------------------------------- %
+% Introduction
+% ------------------------------------- %
+
+\parskip=5pt
+\chapter*{Introduction}
+
+Dans le cadre du cursus de la Licence 2 informatique, durant notre second semestre, il nous a été proposé un projet qui devra mettre en pratique nos connaissances et nos compétences au travers d'un cahier des charges. L’objet de cette démarche sera d’envisager la conception et le développement d'un moteur d'évaluation de requêtes SQL en mémoire vive.
+
+Les requêtes considérées seront des requêtes simples de la forme : \enquote{SELECT ... FROM ... WHERE ... }  sans imbrication.
+
+À partir d’un ou plusieurs fichiers CSV, Comma-separated Values\footnote{Comma-separated values, format texte ouvert représentant des données tabulaires sous forme de valeurs séparées par des virgules. Voir page },
+il est demandé de construire une représentation en mémoire des données et d'implémenter les procédures de projection, de sélection et de jointure, découlant de l'interrogation SQL.
+
+Il s'agit principalement de reproduire les fonctionnalités de bases d'un SGBD\footnote{Système de Gestion de Base de Données, voir page }, tel que MySQL ou bien Oracle Database.
+
+Notre groupe, composé de cinq personnes : Belkassim Bouzidi, Chakib Elhouiti, Massili Kezzoul, Ramzi Zeroual et Yang Feï, et encadré par M\up{me} Anne-Muriel Chifolleau, a saisie l'opportunité de réaliser ce projet.
+
+\chapter*{Remerciements}
+\vspace{\stretch{1}}
+\begin{center}
+
+	Tout d'abord nous souhaitons adresser nos remerciements au corps professoral et administratif de la faculté des sciences de Montpellier qui déploient des efforts pour assurer à leurs étudiants une formation actualisée.
+
+	En second lieu, nous tenons à remercier notre encadrante M\up{me} Anne-Muriel Chifolleau pour ses précieux conseils et son aide durant toute la période du travail.
+
+	Nos vifs remerciements vont également aux membres du jury pour l’intérêt qu’ils ont porté à notre projet en acceptant d’examiner notre travail.
+
+	Nous remercions M\up{r} Yahia Zeroual pour sa relecture attentive de ce rapport.
+
+\end{center}
+\vspace{\stretch{1}}
+
+\parskip=0pt
+\tableofcontents
+
+% Espacement entre les paragraphes
+\parskip=5pt
+% ------------------------------------- %
+% Organisation
+% ------------------------------------- %
+
+\chapter{Organisation du projet}
+\section{Méthodes d’organisation}
+
+Afin de mener à bien le développement du projet, nous avons décidé de travailler un maximum de temps ensemble et de manière très régulière. Nous nous sommes réunis trois à quatre fois par semaine, en vue de faire le point sur l'avancement du projet et de définir les objectifs restant à atteindre.
+
+Ainsi, selon l'état de progression de la conception du moteur de requêtes, nous réalisâmes les tâches en retard durant le week-end pour ne pas cumuler de retard et respecter l'intégralité du cahier des charges.
+
+Toutes les semaines, nous nous sommes réunis avec notre encadrante, M\up{me} Anne-Muriel Chifolleau. Lors de ces réunions, des mises au point relatives au projet, nous furent prodiguées, cela nous a permis de bénéficier de précieux conseils.
+
+\section{Decoupage du projet}
+
+Nous avons découpé la réalisation du projet en trois grandes phases.
+
+\subsection{Phase de modélisation}
+
+Durant cette étape, nous nous sommes réunis pour définir les fonctionnalités demandées par le projet. Notamment séparer les fonctionnalités importantes de celle moins importantes. Nous avons également choisi les outils de travail collaboratifs et les principales technologies utilisées, ainsi qu’une première modélisation du projet.
+
+\subsection{Phase de développement}
+
+Durant cette phase, nous avons commencé à implémenter les différentes fonctionnalités que nous avons modélisées lors de l'étape précédente, toute en améliorant la modélisation au fur et à mesure de l'avancement de notre projet. Nous avons notamment réalisé des tests pour les différents modules afin de s'assurer de leur bon fonctionnement.
+
+\subsection{Finalisation du projet}
+
+Cette étape a consisté en la réalisation des tests finaux afin de s'assurer que le moteur de requêtes fonctionne en toute circonstance et éventuellement corriger les bogues qui peuvent apparaitre.
+
+\section{Outils de collaboration}
+
+Afin de s'organiser, nous avons décidé d'utiliser Git au travers du serveur GitLab hébergé par le service informatique de la faculté. En effet le logiciel libre Git a facilité grandement la collaboration entre nous. Le serveur GitLab quant à lui est fourni gratuitement par le service informatique de la faculté.
+
+En ce qui concerne la rédaction de ce rapport, nous avons utilisé \LaTeX, système de composition de documents créé par Leslie Lamport, pour faciliter la rédaction à plusieurs.
+
+\begin{figure}[h]
+	\begin{minipage}[c]{.46\linewidth}
+		\centering
+		%	\includegraphics[width=1\textwidth]{img/gitlab.png}
+		\caption{Logo du GitLab}
+	\end{minipage}
+	\hfill%
+	\begin{minipage}[c]{.46\linewidth}
+		\centering
+		%	\includegraphics[width=1\textwidth]{img/latex.png}
+		\caption{Logo de Latex}
+	\end{minipage}
+\end{figure}
+
+
+% ------------------------------------- %
+% Le langage SQL
+% ------------------------------------- %
+
+\chapter{..}
+
+%Le domaine dans le quelle ce situ notre projet est la gestion d’une base de donnée en utilisant le langage SQL .
+
+%\section{Qu’est-ce qu’une donnée}
+\section{..}
+
+
+\end{document}
