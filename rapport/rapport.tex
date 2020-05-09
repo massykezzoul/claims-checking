@@ -62,7 +62,7 @@
     Belkassim BOUZIDI \and
     Chakib ELHOUITI \and
     Massili KEZZOUL \and
-    Abdelkader Nedjari \and
+    Abdelkader NEDJARI \and
     Ramzi ZEROUAL
 }
 \date{\today}
@@ -81,7 +81,7 @@
 		Belkassim BOUZIDI \\
 		Chakib ELHOUITI \\
 		Massili KEZZOUL \\
-		Abdelkader Nedjari \\
+		Abdelkader NEDJARI \\
 		Ramzi ZEROUAL \\
 		\par}
 
@@ -128,7 +128,7 @@
 
 	Tout d'abord nous souhaitons adresser nos remerciements au corps professoral et administratif de la faculté des sciences de Montpellier qui déploient des efforts pour assurer à leurs étudiants une formation actualisée.
 
-	En second lieu, nous tenons à remercier notre encadrante M\up{me}  pour ses précieux conseils et son aide durant toute la période du travail.
+	En second lieu, nous tenons à remercier notre encadrant M\up{r} Konstantin \textsc{Todorov} pour ses précieux conseils et son aide durant toute la période du travail.
 
 	Nos vifs remerciements vont également aux membres du jury pour l’intérêt qu’ils ont porté à notre projet en acceptant d’examiner notre travail.
 
@@ -258,10 +258,42 @@ En fin, la reconnaissance des différents entitées concerné est faite grace à
 \chapter{Conception et implementation du projet}
 
 \section{Conception et Modélisation}
-Lors de cette première phase, le plus important a été de comprendre et s'imprégner du code déjà mis en place et mis à notre disposition (Claimskg), comprendre les outils utilisés ainsi que la structure déjà établie.
+
+\subsection{Analyse de ClaimKG}
+
+Lors de cette première phase, le plus important a été de comprendre et s'imprégner du code et de la structure déjà mis en place et mis à notre disposition (Claimskg), comprendre les outils utilisés ainsi que la structure déjà établie.
+
+\begin{figure}[h]
+	\centering
+	\begin{minipage}[c]{.95\linewidth}
+		\includegraphics[width=1\textwidth]{img/claim.png}
+		\caption{ClaimKG data model}
+	\end{minipage}
+\end{figure}
+
+%% parler un peu de la structure de claimKG avant de parler du code
+
+\subsubsection*{La structure}
 
 Comme le projet est d'une envergure immense bien comprendre la structure était primordiale afin de respecter un maximum les outils utilisés, nous avons premièrement analysé les classes principales comme celle de " Claim.py ", puis comprendre comment l'exécution de l'extraction ce fessait avec "init.py " . nous avons ensuite analysé les différents scripts d'extraction de sites de fact cheking.
+
+\begin{figure}[h]
+	\centering
+	\begin{minipage}[c]{.95\linewidth}
+		\includegraphics[width=1\textwidth]{img/claimKG.png}
+		\caption{ClaimKG data model}
+	\end{minipage}
+\end{figure}
+
+\subsubsection*{L'implémentation}
+
 De ce que nous avons compris du projet il fallait écrire une class qui représente notre site web, puis écrire des méthodes d'extraction (extraction du titre, extraction de la claim ... etc. ) sur une page que nous appliquerons sur tout le site via un script python, chaque méthode représente une colonne du fichier csv final où tous les éléments extraits sont stockés, tous les résultats de chaque méthode sont regroupés dans une méthode qui les regroupent dans la classe principale "Claim.py" et c'est sur celle-ci que le script " init.py " est appliqué.
+
+\subsection{Structure des scripts}
+
+\subsubsection*{Parler des class et un peu d'UML}
+
+\subsubsection*{Puis parler du format des données que notre prog doit rendre}
 
 L'étape suivante était de trouver un site web respectant les critères de fact cheking ainsi que les critères (une véracité, une claim écrite, un auteur, des tags ... etc) du projet initial (Claimskg), pour apporter un maximum de diversité ainsi que notre contribution personnelle spécifique nous avons décidé avec l'accord de notre encadrant d'extraire les données d'un site d'une langue différente pas encore présente dans le projet, comme tous les étudiants présents dans ce projet ont une connaissance de la langue arabe il a été logique de commencer par cette langue, le seul site officiel de fact cheking en arabe est https://fatabyyano.net/ nous avons donc analysé la structure du site web puis commencé son l'implementation, l'étape d'après fut de trouver comment faire une "named entity recognition" sur les mêmes principes que celle déjà présenté ( TagMe qui renvoi vers des liens wikipedia).
 
@@ -276,7 +308,17 @@ Le second site web sur lequel nous avons travaillé est https://www.vishvasnews.
 
 \chapter{Bilan et conclusions}
 
-\chapter{Bibliographie et annexes}
+\section{Ce qu'on a fait et pas fait}
+
+\section{Perspective}
+
+
+% ------------------------------------- %
+% Annexes
+% ------------------------------------- %
+
+\appendix
+\chapter{Annexe}
 
 
 

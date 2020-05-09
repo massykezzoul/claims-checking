@@ -59,7 +59,7 @@ class VishvasnewsFactCheckingSiteExtractor:
         different_urls = []
         different_categories_value = [
             "politics", "society", "world", "viral", "health"]
-        url_begins = ["https://www.vishvasnews.com/english/","https://www.vishvasnews.com/","https://www.vishvasnews.com/urdu/","https://www.vishvasnews.com/assamese/","https://www.vishvasnews.com/tamil/","https://www.vishvasnews.com/malayalam/"
+        url_begins = ["https://www.vishvasnews.com/english/","https://www.vishvasnews.com/urdu/","https://www.vishvasnews.com/assamese/","https://www.vishvasnews.com/tamil/","https://www.vishvasnews.com/malayalam/"
         ,"https://www.vishvasnews.com/gujarati/","https://www.vishvasnews.com/telugu/","https://www.vishvasnews.com/marathi/","https://www.vishvasnews.com/odia/"]
         for url in url_begins:
             for value in different_categories_value:
