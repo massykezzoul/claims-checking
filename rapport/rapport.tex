@@ -341,7 +341,33 @@ Le second site web sur lequel nous avons travaillé est https://www.vishvasnews.
 
 \chapter{Analyse des résultats}
 
-\section{résultats}
+\section{Résultats}
+Comme premier résultat du site fatabayyano nous avons obtenu un fichier csv contenant l'url de la claim le rating et sa traduction la claim, la date , le titre, tous les liens présents sur la page et les tags tout cela en langue arabe.
+\begin{figure}[h]
+	\centering
+	\begin{minipage}[c]{.5\linewidth}
+\includegraphics[width=1\textwidth]{img/fatab1.png}
+\caption{premier fichier csv obtenu}
+	\end{minipage}
+\end{figure}
+
+Puis après avoir appliqué le processus de traduction sur la claim et la review et après obtention des entités présentes dedans, deux autres colonnes sont ajoutées contenant les résultats du tagme du projet initial, ces résultats sont les noms attribués par la base de données wikipedia de cettte entité.
+\begin{figure}[h]
+	\centering
+	\begin{minipage}[c]{.5\linewidth}
+\includegraphics[width=1\textwidth]{img/fatab2.png}
+\caption{fichier csv final de fatabayyano}
+	\end{minipage}
+\end{figure}
+
+Les résultats du second site web "vishvasnews" sont aussi regroupés dans un fichier csv, qui lui est celui généré par le programme du projet initial compte tenu du fait qu'une des langues extraite est l'anglais, les colonnes sont les ratings values, l'auteur de la claim, l'auteur de la review de claim, l'url de la claim, la review, la date, la claim entière, les liens présents, le titre et les tags. Tout cela est rangé par langue l'anglais, Hindi, Pendjabi, Ourdou, Bengali, Tamoul, Malayalam, Goudjerati, Télougou, Marathi puis L'odia puis par catégorie.
+\begin{figure}[h]
+	\centering
+	\begin{minipage}[c]{.5\linewidth}
+\includegraphics[width=1\textwidth]{img/vishvas.png}
+\caption{fichier csv de vishvasnews}
+	\end{minipage}
+\end{figure}
 \section{Problèmes rencotrés}
 
 \chapter{Bilan et conclusions}
