@@ -389,14 +389,27 @@ Les résultats du second site web "vishvasnews" sont aussi regroupés dans un fi
 Le scrapping des sites s'effectue parfaitement, aucune amélioration n'est nécessaire au script en lui-même, la seule perspective pour notre projet est la traduction des 10 langues présentes dans le deuxième site non prises en compte par le programme "tagme", deux idées peuvent être avancées :
 
 Continuer à utiliser Yandex malgré ces capacités limitées tel qu'expliqué plus haut en changent uniquement le script de traduction du premier site web ou utiliser une autre API, de préférence Google Traduction qui est cependant payante, mais dont l'efficacité est sans conteste la meilleure.
-
+\section{Conclusion}
+Pour conclure, ce projet nous a permis d'apprendre beaucoup de nouvelles notions. Il a renforcé notre travail en groupe et le sens de la communication, de la synchronisation ainsi que de l'organisation. Il nous a aussi permis de découvrir les principes du web scrapping et l'utilisation de nouvelles API et bibliothèques.
 % ------------------------------------- %
 % Annexes
 % ------------------------------------- %
 
 \appendix
 \chapter{Annexe}
-
-
-
+\section{Code de la méthode \textit{extract\_claim\_and\_review}}
+\lstinputlisting[language=python, firstline=92, lastline=116]{../src/websites/fatabyyano-integration.py}
+\section{Code de la traduction}
+\begin{figure}[h]
+	\centering
+	\begin{minipage}[c]{.5\linewidth}
+		\includegraphics[width=1\textwidth]{img/codear.png}
+		\caption{Code traduction}
+	\end{minipage}
+\end{figure}
+\lstinputlisting[language=python, firstline=199, lastline=260]{../src/websites/fatabyyano-integration.py}
+\section{Code de la méthode \textit{retrieve\_urls} }
+\lstinputlisting[language=python, firstline=83, lastline=125]{../src/websites/vishvasnews-integration.py}
+\section{Code de la méthode \textit{extract\_links} }
+\lstinputlisting[language=python, firstline=192, lastline=220]{../src/websites/vishvasnews-integration.py}
 \end{document}
