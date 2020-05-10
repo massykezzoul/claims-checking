@@ -330,8 +330,9 @@ Dans cette phase, nous allons présenter les étapes de conception que nous avon
 
 % Titre pour le diagramme de séquence.
 Lors de la phase de la modélisation, nous avons vu qu'il était primordial de concevoir un diagramme de classe pour connaitre la manière dont les classes interagissent. Comme la figure suivante le montre, des classes ont été rajoutées par rapport aux classes déjà développées.
- 
+
 Dans les sous-classes de FactCheckingSiteExtractor, la méthode "extract\_claim\_and\_review" a été implémentée pour transformer une page donnée en paramètre en une instance de claim. La méthode  "get\_all\_claims" quant à elle, extrait les liens des articles du site web. Les données, une fois extraites seront stockées dans un fichier CSV où chaque ligne représente un article et chaque colonne les informations le concernant.
+
 %Figure du diagramme de classe.
 
 %Titre pour diagramme de séquence.
@@ -341,7 +342,7 @@ Le déroulement de l'extraction des données a été quant à elle modélisée p
 
 \subsubsection*{Puis parler du format des données que notre prog doit rendre}
 
-La deuxième étape consistait à trouver un site web respectant les critères de fact-cheking et qui nous permet d'extraire les données essentielles (la véracité, les claims écrites, un auteur, etc...) au noyau du projet (ClaimsKG). Pour apporter un maximum de diversité ainsi que notre contribution personnelle, nous avons décidé, avec l'accord de notre encadrant, d'extraire les données d'un site d'une langue qui n'est pas encore présente dans le projet. Vu que tous les étudiants de ce projet sont arabophones, la langue arabe était un choix logique. Le seul site officiel de fact-cheking en arabe est : https://fatabyyano.net/. 
+La deuxième étape consistait à trouver un site web respectant les critères de fact-cheking et qui nous permet d'extraire les données essentielles (la véracité, les claims écrites, un auteur, etc...) au noyau du projet (ClaimsKG). Pour apporter un maximum de diversité ainsi que notre contribution personnelle, nous avons décidé, avec l'accord de notre encadrant, d'extraire les données d'un site d'une langue qui n'est pas encore présente dans le projet. Vu que tous les étudiants de ce projet sont arabophones, la langue arabe était un choix logique. Le seul site officiel de fact-cheking en arabe est : https://fatabyyano.net/.
 
 Nous avons donc analysé la structure du site web puis commencé son implémentation. L'étape suivante fût de trouver comment faire une "named entity recognition" sur les mêmes principes que celles déjà présentées (TagMe qui renvoie vers des liens wikipedia).
 
@@ -356,8 +357,8 @@ Comme premier résultat du site fatabayyano nous avons obtenu un fichier csv con
 \begin{figure}[h]
 	\centering
 	\begin{minipage}[c]{.5\linewidth}
-\includegraphics[width=1\textwidth]{img/fatab1.png}
-\caption{premier fichier csv obtenu}
+		\includegraphics[width=1\textwidth]{img/fatab1.png}
+		\caption{premier fichier csv obtenu}
 	\end{minipage}
 \end{figure}
 
@@ -365,8 +366,8 @@ Puis après avoir appliqué le processus de traduction sur la claim et la review
 \begin{figure}[h]
 	\centering
 	\begin{minipage}[c]{.5\linewidth}
-\includegraphics[width=1\textwidth]{img/fatab2.png}
-\caption{fichier csv final de fatabayyano}
+		\includegraphics[width=1\textwidth]{img/fatab2.png}
+		\caption{fichier csv final de fatabayyano}
 	\end{minipage}
 \end{figure}
 
@@ -374,8 +375,8 @@ Les résultats du second site web "vishvasnews" sont aussi regroupés dans un fi
 \begin{figure}[h]
 	\centering
 	\begin{minipage}[c]{.5\linewidth}
-\includegraphics[width=1\textwidth]{img/vishvas.png}
-\caption{fichier csv de vishvasnews}
+		\includegraphics[width=1\textwidth]{img/vishvas.png}
+		\caption{fichier csv de vishvasnews}
 	\end{minipage}
 \end{figure}
 \section{Problèmes rencotrés}
