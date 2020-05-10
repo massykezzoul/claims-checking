@@ -8,6 +8,16 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 
+% Liens et autres
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+	urlcolor=blue,
+	pdftitle={Rapport de projet Claims checking},
+	bookmarks=true,
+}
+
 % Bout de code
 \usepackage{listings}
 \usepackage{color}
@@ -88,7 +98,7 @@
 	\vspace{1.5cm}
 
 	{\Large\itshape
-		Encadrante :\par
+		Encadrant :\par
 		M\up{r} Konstantin \textsc{Todorov}
 		\par}
 
@@ -151,9 +161,9 @@
 
 Afin de mener à bien le développement du projet, nous avons décidé de travailler un maximum de temps ensemble et de manière très régulière. Nous nous sommes réunis trois à quatre fois par semaine, en vue de faire le point sur l'avancement du projet et de définir les objectifs restant à atteindre.
 
-Ainsi, selon l'état de progression de la conception du moteur de requêtes, nous réalisâmes les tâches en retard durant le week-end pour ne pas cumuler de retard et respecter l'intégralité du cahier des charges.
+Ainsi, selon l'état de progression de la conception, nous réalisâmes les tâches en retard durant le week-end pour ne pas cumuler de retard et respecter l'intégralité du cahier des charges.
 
-Toutes les semaines, nous nous sommes réunis avec notre encadrant , M\up{r} Konstantin \textsc{Todorov} Lors de ces réunions , des mises au point relatives au projet, nous furent prodiguées, cela nous a permis de bénéficier de précieux conseils.
+Toutes les semaines, nous nous sommes réunis avec notre encadrant , M\up{r} Konstantin \textsc{Todorov} Lors de ces réunions, des mises au point relatives au projet, nous furent prodiguées, cela nous a permis de bénéficier de précieux conseils.
 
 \section{Decoupage du projet}
 
@@ -210,17 +220,17 @@ En vue de la prolifération très rapide des informations, il devient de plus en
 
 % [1] tsema faut mettre des liens
 
-Le LIRMM[1] en collaboration avec 2 équipes allemandes (L3S Hannover et l’institut de sciences sociologiques GESIS à Cologne), a construit et mise à disposition la base de connaissance ClaimsKG[1] qui recueillit les informations et méta-données provenant d’un grand nombre de sites journalistiques internationaux de fact checking, tels que Politifact[1] ou Snopes[1]. ClaimsKG est un graphe de connaissances d’assertions annotées et liées qui facilite la création de requêtes structurées sur les assertions, leurs valeurs de vérité (True, Mostly False, etc...), leurs auteurs, date de publication, etc. ClaimsKG est généré par un pipeline entièrement automatisé qui collecte des assertions et des métadonnées à partir des sites de fact-checking, transforme les données en graphes de connaissances selon un modèle établis, et annote les assertions avec des entités DBpedia (Wikipedia). La base actuelle comprend plus de 32,000 assertions publiées depuis 1996 et est mis à jour régulièrement.
+Le LIRMM \footnote{Le Laboratoire d’Informatique, de Robotique et de Microélectronique de Montpellier} en collaboration avec 2 équipes allemandes (L3S Hannover et l’institut de sciences sociologiques GESIS à Cologne), a construit et mise à disposition la base de connaissance ClaimsKG \footnote{\url{https://github.com/claimskg}} qui recueillit les informations et méta-données provenant d’un grand nombre de sites journalistiques internationaux de fact checking, tels que Politifact\footnote{\url{https://www.politifact.com/}} ou Snopes\footnote{\url{https://www.snopes.com/}}. ClaimsKG est un graphe de connaissances d’assertions annotées et liées qui facilite la création de requêtes structurées sur les assertions, leurs valeurs de vérité (True, Mostly False, etc...), leurs auteurs, date de publication, etc. ClaimsKG est généré par un pipeline entièrement automatisé qui collecte des assertions et des métadonnées à partir des sites de fact-checking, transforme les données en graphes de connaissances selon un modèle établis, et annote les assertions avec des entités DBpedia (Wikipedia). La base actuelle comprend plus de 32,000 assertions publiées depuis 1996 et est mis à jour régulièrement.
 
 \subsection{Travail à réaliser}
 
 Le sujet du TER consiste en l’enrichissement de cette base de connaissances avec des nouvelles données provenant des sites web suivants :
 
-\begin{itemize}
+\begin{description}
 	%"فتبينوا" arabe non pris en charge ?????
-	\item[Fatabyyano[1]] Jordani, en Arabe, Fatabyyano (veut dire "Alors montrez-le" en arabe) est la première et la seule plateforme arabe certifiée par l'IFCN [1];
-	\item[Vishvas.news[1]] Un site Internet de vérification des faits multilingue (en hindi, anglais ...) qui s'engage à combattre la désinformation et les informations erronées.
-\end{itemize}
+	\item[Fatabyyano]\footnote{\url{https://fatabyyano.net/}} Jordani, en Arabe, Fatabyyano (terme en arabe qui veut dire "Alors montrez-le" en arabe) est la première et la seule plateforme arabe certifiée par l'IFCN \footnote{International Fact-Checking Network : \url{https://www.poynter.org/ifcn/}};
+	\item[Vishvas.news]\footnote{\url{https://www.vishvasnews.com/}} Un site Internet de vérification des faits multilingue (en hindi, anglais ...) qui s'engage à combattre la désinformation et les informations erronées.
+\end{description}
 
 Le but du TER sera d’identifier les assertions individuelles dans chaque histoire, ainsi que leur label de véracité et par la suite identifier les relations entre les assertions dans chaque histoire, ainsi que les relations entre ces histoires. Les données produites par ce projet seront intégrées à la base de connaissance ClaimsKG.
 
@@ -228,11 +238,11 @@ La principale difficulté qu'on s'attend à rencontrer est la gestion des diffé
 
 \section{Technologies utilisées}
 
-Nous avons implémenter l'application en Python[1]. Choix qui s'impose de lui même car couplé à la bibliothèque BeautifulSoup[1] il devient très facile de faire du web Scraping[1].
+Nous avons implémenter l'application en Python. Choix qui s'impose de lui même car couplé à la bibliothèque BeautifulSoup il devient très facile de faire du web scraping\footnote{Le web scraping est une technique d'extraction du contenu de sites Web, via un script ou un programme}.
 
-En ce qui concerne la traduction nous avons choisi d'utiliser Yandex Translator[1]. En effet en vu de la taille des données à traduire nous avons pas pu utiliser l'api de traduction de Google puisque cette dernière devient payante à partir d'un certain nombre de caractères.
+En ce qui concerne la traduction nous avons choisi d'utiliser Yandex Translator\footnote{\url{https://translate.yandex.com/}}. En effet en vu de la taille des données à traduire nous avons pas pu utiliser l'api de traduction de Google puisque cette dernière devient payante à partir d'un certain nombre de caractères.
 
-En fin, la reconnaissance des différents entitées concerné est faite grace à l'outil TAGME[1] a travers son API python[1].
+En fin, la reconnaissance des différents entitées concerné est faite grace à l'outil TAGME\footnote{\url{https://tagme.d4science.org/tagme/}} a travers son API python\footnote{Lien Github vers l'api Python de TAGME : \url{https://github.com/marcocor/tagme-python}}.
 
 \vspace{2cm}
 \begin{figure}[h]
@@ -263,35 +273,63 @@ En fin, la reconnaissance des différents entitées concerné est faite grace à
 
 Lors de cette première phase, le plus important a été de comprendre et s'imprégner du code et de la structure déjà mis en place et mis à notre disposition (Claimskg), comprendre les outils utilisés ainsi que la structure déjà établie.
 
+\subsubsection*{La structure}
+
+Comme le projet est d'une envergure immense bien comprendre la structure était primordiale afin de respecter un maximum les outils utilisés. Notre encadrant nous à mis a disposition un écrit (que vous trouverez dans le dossier autre/ sous le nom de ClaimsKG.pdf) qui explique la structure global du projet dont voilà ci-dessous un résumer.
+
 \begin{figure}[h]
 	\centering
 	\begin{minipage}[c]{.95\linewidth}
 		\includegraphics[width=1\textwidth]{img/claim.png}
-		\caption{ClaimKG data model}
+		\caption{ClaimKG}
 	\end{minipage}
 \end{figure}
 
-%% parler un peu de la structure de claimKG avant de parler du code
+Comme vous pouvez le voir sur le schéma, ClaimsKG est découpé en plusieurs phases. La première consiste à extraire les données brutes à partir de site web de fact-checking. Ensuite les données sont structurées afin de produire un fichier CSV. En deuxième phase le fichier CSV est passé à un générateur de Graphes de connaissances\footnote{Knowledge Graph Generator}. Dans notre cas, on s'occupe de la première phase. C'est-à-dire, extraire les données brutes du site web afin de produire un fichier CSV.
 
-\subsubsection*{La structure}
+Le fichier CSV en question contient l'ensemble des faits traiter par un site web. Chaque fait est passer à un script de scraping afin d'extraite chaque information et de la structurer. La structure d'un fait est faite selon un modèl précis dont voici une partie :
 
-Comme le projet est d'une envergure immense bien comprendre la structure était primordiale afin de respecter un maximum les outils utilisés, nous avons premièrement analysé les classes principales comme celle de " Claim.py ", puis comprendre comment l'exécution de l'extraction ce fessait avec "init.py " . nous avons ensuite analysé les différents scripts d'extraction de sites de fact cheking.
+\begin{description}
+	\item[rating value] La valeur de véracité du fait;
+	\item[creativeWork author name] Auteur de la claim;
+	\item[creativeWork datePublished] Date de publication de la claim;
+	\item[claimReview author] Auteur de l'article/analyse de la claim;
+	\item[extra entities claimReview] Les différentes entitées presente dans la review.
+\end{description}
+
+Vous trouverez ci-dessous la structuration complète.
 
 \begin{figure}[h]
 	\centering
 	\begin{minipage}[c]{.95\linewidth}
 		\includegraphics[width=1\textwidth]{img/claimKG.png}
-		\caption{ClaimKG data model}
+		\caption{Structuration complète d'un fait}
 	\end{minipage}
 \end{figure}
 
 \subsubsection*{L'implémentation}
 
-De ce que nous avons compris du projet il fallait écrire une class qui représente notre site web, puis écrire des méthodes d'extraction (extraction du titre, extraction de la claim ... etc. ) sur une page que nous appliquerons sur tout le site via un script python, chaque méthode représente une colonne du fichier csv final où tous les éléments extraits sont stockés, tous les résultats de chaque méthode sont regroupés dans une méthode qui les regroupent dans la classe principale "Claim.py" et c'est sur celle-ci que le script " init.py " est appliqué.
+Après la partie théorique de l'analyse nous avons commencer à regarder les implémentations déjà faite\footnote{Vous trouverez cette implémentation à cette addresse : \url{https://github.com/claimskg/claimskg-extractor}}. Nous avons analysé les classes principales comme celle de \enquote{Claim.py}, puis comprendre comment l'exécution de l'extraction ce fessait avec \enquote{\_\_init\_\_.py}. nous avons ensuite analysé les différents scripts d'extraction de sites de fact-cheking tel que \enquote{africacheck.py}.
+
+\begin{figure}[h]
+	\centering
+	\begin{minipage}[c]{.5\linewidth}
+		\includegraphics[width=1\textwidth]{img/bs.png}
+		\caption{Ici une image UML pour expliquer la structuration de leur implémentation}
+	\end{minipage}
+\end{figure}
+
 
 \subsection{Structure des scripts}
-
+% reformuler ces titres
 \subsubsection*{Parler des class et un peu d'UML}
+
+% reformuler cette partie
+De ce que nous avons compris du projet il fallait écrire une classe qui représente l'extracteur, puis écrire des méthodes d'extraction (extraction du titre, extraction de la claim ... etc. ) sur une page que nous appliquerons sur tout le site via un script python, chaque méthode représente une colonne du fichier csv final où tous les éléments extraits sont stockés, tous les résultats de chaque méthode sont regroupés dans une méthode qui les regroupent dans la classe principale `Claim.py` et c'est sur celle-ci que le script ` init.py ` est appliqué.
+
+parler de l'extraction des liens
+
+puis l'extraction d'une claim
 
 \subsubsection*{Puis parler du format des données que notre prog doit rendre}
 
@@ -304,11 +342,32 @@ Le second site web sur lequel nous avons travaillé est https://www.vishvasnews.
 \chapter{Analyse des résultats}
 
 \section{Résultats}
-Comme premier résultat du site fatabayyano nous avons obtenu un fichier csv contenant l'url de la claim le rating et sa traduction la claim, la date , le titre, tous les liens présents sur la page et les tags tout cela en langue arabe : :capture d'écran fichier csv en arb:.
+Comme premier résultat du site fatabayyano nous avons obtenu un fichier csv contenant l'url de la claim le rating et sa traduction la claim, la date , le titre, tous les liens présents sur la page et les tags tout cela en langue arabe.
+\begin{figure}[h]
+	\centering
+	\begin{minipage}[c]{.5\linewidth}
+\includegraphics[width=1\textwidth]{img/fatab1.png}
+\caption{premier fichier csv obtenu}
+	\end{minipage}
+\end{figure}
 
-Puis après avoir appliqué le processus de traduction sur la claim et la review et après obtention des entités présentes dedans, deux autres colonnes sont ajoutées contenant les résultats du tagme du projet initial, ces résultats sont les noms attribués par la base de données wikipedia de cettte entité : :fichier csv avec claim&review entites:.
+Puis après avoir appliqué le processus de traduction sur la claim et la review et après obtention des entités présentes dedans, deux autres colonnes sont ajoutées contenant les résultats du tagme du projet initial, ces résultats sont les noms attribués par la base de données wikipedia de cettte entité.
+\begin{figure}[h]
+	\centering
+	\begin{minipage}[c]{.5\linewidth}
+\includegraphics[width=1\textwidth]{img/fatab2.png}
+\caption{fichier csv final de fatabayyano}
+	\end{minipage}
+\end{figure}
 
-Les résultats du second site web "vishvasnews" sont aussi regroupés dans un fichier csv, qui lui est celui généré par le programme du projet initial compte tenu du fait qu'une des langues extraite est l'anglais, les colonnes sont les ratings values, l'auteur de la claim, l'auteur de la review de claim, l'url de la claim, la review, la date, la claim entière, les liens présents, le titre et les tags. Tout cela est rangé par langue l'anglais, Hindi, Pendjabi, Ourdou, Bengali, Tamoul, Malayalam, Goudjerati, Télougou, Marathi puis L'odia puis par catégorie: :csv vishvasnews:
+Les résultats du second site web "vishvasnews" sont aussi regroupés dans un fichier csv, qui lui est celui généré par le programme du projet initial compte tenu du fait qu'une des langues extraite est l'anglais, les colonnes sont les ratings values, l'auteur de la claim, l'auteur de la review de claim, l'url de la claim, la review, la date, la claim entière, les liens présents, le titre et les tags. Tout cela est rangé par langue l'anglais, Hindi, Pendjabi, Ourdou, Bengali, Tamoul, Malayalam, Goudjerati, Télougou, Marathi puis L'odia puis par catégorie.
+\begin{figure}[h]
+	\centering
+	\begin{minipage}[c]{.5\linewidth}
+\includegraphics[width=1\textwidth]{img/vishvas.png}
+\caption{fichier csv de vishvasnews}
+	\end{minipage}
+\end{figure}
 \section{Problèmes rencotrés}
 
 \chapter{Bilan et conclusions}
