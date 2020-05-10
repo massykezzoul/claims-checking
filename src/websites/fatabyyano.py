@@ -336,7 +336,7 @@ class FatabyyanoFactCheckingSiteExtractor:
 
     def get_claim_and_print(self, file_name="", err_file_name=""):
         '''
-            Extract all claims from vishvasnews and print them to :file_name:
+            Extract all claims from fatabyyano and print them to :file_name:
             :file_name: if not spicified write to stdout
             :return:    0 if sucess, -1 if error
         '''
