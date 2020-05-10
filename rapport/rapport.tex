@@ -361,7 +361,7 @@ Le second site web sur lequel nous avons travaillé est https://www.vishvasnews.
 
 \section{Implémentation}
 
-Tout comme la partie conception, nous avons décidé de répartie l'implémentation du projet en X parties
+Tout comme la partie conception, nous avons décidé de répartir l'implémentation du projet en plusieurs parties.
 
 Nous avons commencé par implémenter les classes que nous avons modélisées dans la partie conception, puis nous nous sommes concentrés sur la manière d'extraire les liens de chaque article. Pour cela, nous avons tout d'abord chercher dans le site où et comment les liens sont presentés en inspectant les pages web ainsi que leur code source. Une fois les liens trouvés et après avoir bien cerné la structure du site web, nous avons commencé à ecrire la méthode \enquote{get(url:string)} qui permet, à partir d'un lien URL de retourner une instance de la classe \enquote{BeautifulSoup}. Cette classe permet de garder en mémoire le code source d'une page web de façon structurée, et qui permet avec ses méthodes, de recherche et de manipulation. Elle facilite aussi grandement l'extraction des données. Une fois cette méthode achévé, on a pu commencer à ecrire la méthode \enquote{retrieve\_url(page:BeautifulSoup)} qui recupere l'ensemble des liens des articles.
 
