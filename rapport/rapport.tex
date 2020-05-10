@@ -322,22 +322,31 @@ Après la partie théorique de l'analyse nous avons commencer à regarder les im
 \end{figure}
 
 
-\subsection{Structure des scripts}
-% reformuler ces titres
-\subsubsection*{Parler des class et un peu d'UML}
+\subsection{Conception}
 
-% reformuler cette partie
-De ce que nous avons compris du projet il fallait écrire une classe qui représente l'extracteur, puis écrire des méthodes d'extraction (extraction du titre, extraction de la claim ... etc. ) sur une page que nous appliquerons sur tout le site via un script python, chaque méthode représente une colonne du fichier csv final où tous les éléments extraits sont stockés, tous les résultats de chaque méthode sont regroupés dans une méthode qui les regroupent dans la classe principale `Claim.py` et c'est sur celle-ci que le script ` init.py ` est appliqué.
+Dans cette phase, nous allons présenter les étapes de conception que nous avons suivies pour bien implémenter notre application. La première étape a été de concevoir quelques diagrammes UML utiles à la bonne compréhension du projet.
 
-parler de l'extraction des liens
+\subsubsection*{Diagramme UML}
 
-puis l'extraction d'une claim
+% Titre pour le diagramme de séquence.
+Lors de la phase de la modélisation, nous avons vu qu'il était primordial de concevoir un diagramme de classe pour connaitre la manière dont les classes interagissent. Comme la figure suivante le montre, des classes ont été rajoutées par rapport aux classes déjà développées.
+ 
+Dans les sous-classes de FactCheckingSiteExtractor, la méthode « extract_claim_and_review » a été implémentée pour transformer une page donnée en paramètre en une instance de claim. La méthode « get_all_claims » quant à elle, extrait les liens des articles du site web. Les données, une fois extraites seront stockées dans un fichier CSV où chaque ligne représente un article et chaque colonne les informations le concernant.
+
+%Figure du diagramme de classe.
+
+%Titre pour diagramme de séquence.
+Le déroulement de l'extraction des données a été quant à elle modélisée par un diagramme de séquence. La figure ci-dessous représente le fonctionnement de l'extraction du site Fatabayyano.
+
+%Figure de diagramme de séquence.
 
 \subsubsection*{Puis parler du format des données que notre prog doit rendre}
 
-L'étape suivante était de trouver un site web respectant les critères de fact cheking ainsi que les critères (une véracité, une claim écrite, un auteur, des tags ... etc) du projet initial (Claimskg), pour apporter un maximum de diversité ainsi que notre contribution personnelle spécifique nous avons décidé avec l'accord de notre encadrant d'extraire les données d'un site d'une langue différente pas encore présente dans le projet, comme tous les étudiants présents dans ce projet ont une connaissance de la langue arabe il a été logique de commencer par cette langue, le seul site officiel de fact cheking en arabe est https://fatabyyano.net/ nous avons donc analysé la structure du site web puis commencé son l'implementation, l'étape d'après fut de trouver comment faire une "named entity recognition" sur les mêmes principes que celle déjà présenté ( TagMe qui renvoi vers des liens wikipedia).
+La deuxième étape consistait à trouver un site web respectant les critères de fact-cheking et qui nous permet d'extraire les données essentielles (la véracité, les claims écrites, un auteur, etc...) au noyau du projet (ClaimsKG). Pour apporter un maximum de diversité ainsi que notre contribution personnelle, nous avons décidé, avec l'accord de notre encadrant, d'extraire les données d'un site d'une langue qui n'est pas encore présente dans le projet. Vu que tous les étudiants de ce projet sont arabophones, la langue arabe était un choix logique. Le seul site officiel de fact-cheking en arabe est : https://fatabyyano.net/. 
 
-Le second site web sur lequel nous avons travaillé est https://www.vishvasnews.com/, 11 langues différentes sont présentent sur ce site : L'anglais, Hindi, Pendjabi, Ourdou, Bengali, Tamoul, Malayalam, Goudjerati, Télougou, Marathi et L'odia , nous avons analysé la structure du site puis extrait ses données.
+Nous avons donc analysé la structure du site web puis commencé son implémentation. L'étape suivante fût de trouver comment faire une "named entity recognition" sur les mêmes principes que celles déjà présentées (TagMe qui renvoie vers des liens wikipedia).
+
+Le second site web sur lequel nous avons travaillé est https://www.vishvasnews.com/, il regroupe 11 langues différentes : L'anglais, Hindi, Pendjabi, Ourdou, Bengali, Tamoul, Malayalam, Goudjerati, Télougou, Marathi et L'odia , nous avons analysé la structure du site puis extrait ses données.
 
 \section{Implémentation}
 
