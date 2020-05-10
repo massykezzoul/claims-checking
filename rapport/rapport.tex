@@ -291,10 +291,10 @@ Le fichier CSV en question contient l'ensemble des faits traités par un site we
 
 %la faire descendre.
 \begin{description}
-	\item[rating value] : La valeur de véracité du fait.
-	\item[creativeWork author name] : Auteur de la claim.
-	\item[creativeWork datePublished] : Date de publication de la claim.
-	\item[claimReview author] : Auteur de l'article/analyse de la claim.
+	\item[rating value] : La valeur de véracité du fait;
+	\item[creativeWork author name] : Auteur de la claim;
+	\item[creativeWork datePublished] : Date de publication de la claim;
+	\item[claimReview author] : Auteur de l'article/analyse de la claim;
 	\item[extra entities claimReview] : Les différentes entités présentes dans la review.
 \end{description}
 
@@ -321,25 +321,17 @@ Après la partie théorique de l'analyse nous avons commencer à regarder les im
 	\end{minipage}
 \end{figure}
 
-\begin{figure}[h]
-	\centering
-	\begin{minipage}[c]{.8\linewidth}
-		\includegraphics[width=1\textwidth]{img/notre-extracteur.png}
-		\caption{Structuration du projet}
-	\end{minipage}
-\end{figure}
-
 
 \subsection{Conception}
 
 Dans cette phase, nous allons présenter les étapes de conception que nous avons suivies pour bien implémenter notre application. La première étape a été de concevoir quelques diagrammes UML utiles à la bonne compréhension du projet.
 
-\subsubsection*{Diagramme UML}
+\subsubsection*{Diagrammes UML}
 
 % Titre pour le diagramme de séquence.
 Lors de la phase de la modélisation, nous avons vu qu'il était primordial de concevoir un diagramme de classe pour connaitre la manière dont les classes interagissent. Comme la figure suivante le montre, des classes ont été rajoutées par rapport aux classes déjà développées.
  
-Dans les sous-classes de FactCheckingSiteExtractor, la méthode « extract_claim_and_review » a été implémentée pour transformer une page donnée en paramètre en une instance de claim. La méthode « get_all_claims » quant à elle, extrait les liens des articles du site web. Les données, une fois extraites seront stockées dans un fichier CSV où chaque ligne représente un article et chaque colonne les informations le concernant.
+Dans les sous-classes de FactCheckingSiteExtractor, la méthode "extract_claim_and_review" a été implémentée pour transformer une page donnée en paramètre en une instance de claim. La méthode  "get_all_claims" quant à elle, extrait les liens des articles du site web. Les données, une fois extraites seront stockées dans un fichier CSV où chaque ligne représente un article et chaque colonne les informations le concernant.
 
 %Figure du diagramme de classe.
 
@@ -365,8 +357,8 @@ Comme premier résultat du site fatabayyano nous avons obtenu un fichier csv con
 \begin{figure}[h]
 	\centering
 	\begin{minipage}[c]{.5\linewidth}
-		\includegraphics[width=1\textwidth]{img/fatab1.png}
-		\caption{premier fichier csv obtenu}
+\includegraphics[width=1\textwidth]{img/fatab1.png}
+\caption{premier fichier csv obtenu}
 	\end{minipage}
 \end{figure}
 
@@ -374,8 +366,8 @@ Puis après avoir appliqué le processus de traduction sur la claim et la review
 \begin{figure}[h]
 	\centering
 	\begin{minipage}[c]{.5\linewidth}
-		\includegraphics[width=1\textwidth]{img/fatab2.png}
-		\caption{fichier csv final de fatabayyano}
+\includegraphics[width=1\textwidth]{img/fatab2.png}
+\caption{fichier csv final de fatabayyano}
 	\end{minipage}
 \end{figure}
 
@@ -383,16 +375,12 @@ Les résultats du second site web "vishvasnews" sont aussi regroupés dans un fi
 \begin{figure}[h]
 	\centering
 	\begin{minipage}[c]{.5\linewidth}
-		\includegraphics[width=1\textwidth]{img/vishvas.png}
-		\caption{fichier csv de vishvasnews}
+\includegraphics[width=1\textwidth]{img/vishvas.png}
+\caption{fichier csv de vishvasnews}
 	\end{minipage}
 \end{figure}
 \section{Problèmes rencotrés}
-Le tout premier problème que nous avons rencontré a été lors de l'exécution des scripts d'extraction du projet ClaimsKg. En effet, la majorité des scripts que nous avons essayés ne marchaient plus, certains étaient anciens et n'étaient plus en adéquation avec les mises à jour, soit du projet en lui-même, soit du site web et cause de cela, les bases sur lesquelles nous devions prendre nos marques étaient à prendre avec des pincettes.
 
-Le problème majeur suivant a été de trouver un moyen de faire une « named entity recognition » en langue arabe, car le programme " tagme " ne peut être utilisé sur l'arabe. Nous avons donc cherché des logiciels en open source qui pouvait nous aider à résoudre ce problème, malheureusement, aucun logiciel n'a été satisfaisant; certains nous ont permis comme "Arabic NER" ou " NERAr "de faire des entity recognition, mais sans retourner les liens Wikipedia de ces derniers, d'autres comme " AiDA " qui semblaient être la solution ne fonctionnaient tout simplement pas. Nous avons donc décidé de traduire les claims et leurs reviews afin d'appliquer le programme "tagme", mais là aussi, les API de traduction ne marchaient pas correctement comme googletrans (googletrans est différente de google translate qui n'est pas gratuite) ou étaient limitées par jour comme celle que nous avons utilisé " Yandex ". Le souci avec cette api était que le nombre de caractère traduit quotidiennement était limités.
-
-Le dernier gros problème rencontré quant à lui est le fait que trois des étudiants de notre groupe ont eu des soucis avec leurs machines - deux pc tombés en panne et un chargeur perdu - quelques jours après le début du confinement. Cette contrainte nous a empêché d'aller aussi loin dans la réalisation du projet et nous a retardé sur l'avancement global.
 \chapter{Bilan et conclusions}
 
 \section{Ce qu'on a fait et pas fait}
