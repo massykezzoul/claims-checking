@@ -13,7 +13,7 @@ Les fausses nouvelles (fake news) sont devenues un problème de plus en plus imp
 
 #### Python
 
-Vous devez avoir Python3 installer sur votre machine
+- Vous devez avoir Python3 installer sur votre machine
 
 ```
 # On ubuntu for example
@@ -21,38 +21,9 @@ sudo apt install python3 python3-pip
 
 ```
 
-#### Yandex translator API
+- Avoir une clé api yandex pour la traduction
+- Avoir une clé api TagMe pour extraire les entités
 
-Avoir une clé api yandex pour la traduction
-
-```
-google it
-```
-
-#### TagMe API
-
-Avoir une clé api TagMe pour extraire les entités
-
-```
-google it
-```
-
-### Installation
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
-```
-
-# install all python requirements
-pip3 install -r requirements.txt
-
-python3 __init__.py
-
-```
-
-End with an example of getting some data out of the system or using it for a little demo
 
 ## Technologie utilisée
 
@@ -72,8 +43,3 @@ End with an example of getting some data out of the system or using it for a lit
 
 * Encadrement : **Konstantin Todorov** ​[todorov@lirmm.fr​](mailto:todorov@lirmm.fr​)
 
-## Remerciements
-
-- Hat tip to anyone whose code was used
-- Inspiration
-- etc
